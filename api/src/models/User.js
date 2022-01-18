@@ -1,10 +1,24 @@
 import bcrypt from 'bcryptjs'
 import Model from 'src/lib/Model.js'
+import Pack from 'src/models/Pack.js'
 import { transaction } from 'objection'
 
-export class User extends Model {
+export default class User extends Model {
   static get tableName() {
     return 'users'
+  }
+
+  static get relationMappings() {
+    return {
+      packs: {
+        relation: Model.HasManyRelation,
+        modelClass: Pack,
+        join: {
+          from: 'packs.userId',
+          to: 'users.id',
+        },
+      },
+    }
   }
 
   set password(password) {

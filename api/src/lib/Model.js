@@ -1,7 +1,8 @@
 import { Model as ObjectionModel } from 'objection'
-import day from 'lib/day.js'
+import day from 'src/lib/day.js'
+import knex from 'src/lib/knex.js'
 
-class Model extends ObjectionModel {
+export default class Model extends ObjectionModel {
   // keep timestamps updated
   $beforeUpdate() {
     if (this.updatedAt) {
@@ -10,4 +11,4 @@ class Model extends ObjectionModel {
   }
 }
 
-module.exports = { Model }
+Model.knex(knex)

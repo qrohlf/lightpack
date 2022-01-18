@@ -7,13 +7,20 @@
   "scripts": {
     "start": "node src/index.js",
     "test": "echo \"Error: no test specified\" && exit 1",
-    "postinstall": "ln -s ../src node_modules # shim src into node_modules for absolute imports"
+    "postinstall": "ln -s ../src node_modules # shim src into node_modules for absolute imports",
+    "db.drop": "psql -U postgres -c 'DROP DATABASE lightpack'",
+    "db.create": "psql -U postgres -c 'CREATE DATABASE lightpack'",
+    "db.seed": "node src/scripts/seedDb.js",
+    "db.migration": "knex migrate:make",
+    "db.migrate": "knex migrate:latest",
+    "db.rebuild": "yarn db.drop && yarn db.create && yarn db.migrate && yarn db.seed"
   },
   "author": "Quinn Rohlf",
   "license": "UNLICENSED",
   "dependencies": {
     "bcryptjs": "^2.4.3",
     "chalk": "^5.0.0",
+    "dayjs": "^1.10.7",
     "express": "^4.17.2",
     "helmet": "^5.0.1",
     "knex": "^1.0.1",

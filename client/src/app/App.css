@@ -1,0 +1,5 @@
+/* Global styles only here! */
+
+body {
+  font-family: var(--font-body);
+}

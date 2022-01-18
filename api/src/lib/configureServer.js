@@ -1,5 +1,6 @@
 import express from 'express'
 import helmet from 'helmet'
+import env from 'src/lib/env.js'
 import niceErrors from 'src/lib/middleware/niceErrors.js'
 import logRequests from 'src/lib/middleware/logRequests.js'
 import log from 'src/lib/log.js'
@@ -28,13 +29,12 @@ export default (configureRoutes) => {
   configureRoutes(app)
 
   // report errors to Sentry in prod
-  process.env.NODE_ENV === 'production' &&
-    app.use(Sentry.Handlers.requestHandler())
+  env.NODE_ENV === 'production' && app.use(Sentry.Handlers.requestHandler())
 
   // final error fallback
   app.use((err, req, res) => {
     serverLog.error(err.stack)
-    process.env.NODE_ENV === 'production'
+    env.NODE_ENV === 'production'
       ? res.error.badRequest('An unknown server error occurred')
       : res.error.badRequest(err.message, err.stack)
   })
