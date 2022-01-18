@@ -4,6 +4,8 @@ import User from 'src/models/User.js'
 import PackSection from 'src/models/PackSection.js'
 import Gear from 'src/models/Gear.js'
 
+// helpers
+
 const seedDb = async () => {
   try {
     const user = await User.query().insert({
@@ -11,29 +13,59 @@ const seedDb = async () => {
       password: 'password',
     })
 
-    const pack = await Pack.query().insert({
+    await Pack.query().insertGraph({
       name: 'Spring Fastpacking',
       userId: user.id,
-    })
-
-    const sectionPack = await PackSection.query().insert({
-      name: 'Backpack',
-      packId: pack.id,
-    })
-
-    await Gear.query().insert({
-      name: `Pa'lante Joey`,
-      packSectionId: sectionPack.id,
-    })
-
-    const sectionShelter = await PackSection.query().insert({
-      name: 'Shelter',
-      packId: pack.id,
-    })
-
-    await Gear.query().insert({
-      name: `Locus Gear Khufu`,
-      packSectionId: sectionShelter.id,
+      packSections: [
+        {
+          name: 'Pack',
+          gear: [{ name: "Pa'lante Joey", grams: 455 }],
+        },
+        {
+          name: 'Shelter',
+          gear: [
+            {
+              name: 'Tent',
+              description: 'Locus Khufu DCF (incl stuff sack)',
+              grams: 345.8,
+            },
+            {
+              name: 'Pole Extender',
+              description: 'Needed for use with fixed-length trekking poles',
+              grams: 25.5,
+            },
+            {
+              name: 'Stakes',
+              description: '4x Mini Hog, 2x Ti Hook',
+              grams: 53.8,
+            },
+            {
+              name: 'Trekking Pole',
+              description: 'BD Alpine Carbon Z, (single pole, 120cm)',
+            },
+          ],
+        },
+        {
+          name: 'Sleep',
+          gear: [
+            {
+              name: 'Sleeping Bag',
+              description: 'Marmot Phase 20',
+              grams: 630.3,
+            },
+            {
+              name: 'Sleeping Pad',
+              description: 'xlite reg wide with stuff sack',
+              grams: 460.68,
+            },
+            {
+              name: 'Pillowcase',
+              description: 'thermarest discontinued model',
+              grams: 28.3,
+            },
+          ],
+        },
+      ],
     })
   } finally {
     knex.destroy()

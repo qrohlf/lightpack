@@ -1,2 +1,74 @@
 .PackEditor {
+  display: grid;
+  height: 100vh;
+  min-height: 100vh;
+  grid-template-columns: auto 1fr;
+}
+
+.sidePanel {
+  background: #1b1e2a;
+  color: #fff;
+  padding: 32px;
+}
+
+/*.Header {
+  background: radial-gradient(#00b4db, #0083b0);
+  color: #fff;
+  height: 30vh;
+  min-height: min-content;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}*/
+
+/* Uf, you got some typography work to do, bud */
+.Header h1 {
+  font-weight: 500;
+  font-size: 64px;
+  margin-bottom: 64px;
+  background: linear-gradient(to right, #40e0d0, #ff8c00, #ff0080);
+  background-clip: text;
+  color: transparent;
+  display: inline-block;
+}
+
+.mainContent {
+  margin: 32px;
+}
+
+.contentContainer {
+  max-width: 900px;
+  margin: 0 auto;
+}
+
+.PackSection {
+  margin-bottom: 32px;
+}
+.PackSection h2 {
+  margin-bottom: 16px;
+}
+
+.WaffleChart {
+  display: grid;
+  grid-template-columns: repeat(10, auto);
+  gap: 2px;
+}
+
+.WaffleChart > div {
+  height: 15px;
+  width: 15px;
+}
+
+.GearHeader,
+.Gear {
+  display: grid;
+  grid-template-columns: 1fr 3fr 60px 30px;
+  gap: 16px;
+}
+
+.GearHeader {
+  font-weight: 600;
+  text-transform: uppercase;
+  font-size: 12px;
+  border-bottom: 1px solid #000;
 }

@@ -5,7 +5,8 @@
   "type": "module",
   "exports": "src/index.js",
   "scripts": {
-    "start": "node src/index.js",
+    "start": "nodemon -e js,pug,css src/index.js",
+    "start.prod": "node src/index.js",
     "test": "echo \"Error: no test specified\" && exit 1",
     "postinstall": "ln -s ../src node_modules # shim src into node_modules for absolute imports",
     "db.drop": "psql -U postgres -c 'DROP DATABASE lightpack'",
@@ -23,7 +24,9 @@
     "dayjs": "^1.10.7",
     "express": "^4.17.2",
     "helmet": "^5.0.1",
+    "jsdom": "^19.0.0",
     "knex": "^1.0.1",
+    "node-fetch": "^3.1.1",
     "objection": "^3.0.1",
     "on-headers": "^1.0.2",
     "pg": "^8.7.1"
@@ -36,6 +39,7 @@
     "eslint-config-prettier": "^8.3.0",
     "eslint-plugin-no-only-tests": "^2.6.0",
     "eslint-plugin-prettier": "^4.0.0",
+    "nodemon": "^2.0.15",
     "prettier": "^2.5.1"
   }
 }

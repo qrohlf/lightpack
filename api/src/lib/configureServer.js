@@ -32,7 +32,11 @@ export default (configureRoutes) => {
   env.NODE_ENV === 'production' && app.use(Sentry.Handlers.requestHandler())
 
   // final error fallback
-  app.use((err, req, res) => {
+  app.use((err, req, res, next) => {
+    if (res.headersSent) {
+      return next(err)
+    }
+
     serverLog.error(err.stack)
     env.NODE_ENV === 'production'
       ? res.error.badRequest('An unknown server error occurred')
