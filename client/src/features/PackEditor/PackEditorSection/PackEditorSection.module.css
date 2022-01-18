@@ -1,0 +1,13 @@
+.PackEditorSection {
+  display: grid;
+  grid-template-columns: min-content 1fr;
+  gap: 8px;
+  margin-bottom: 34px;
+}
+
+.colorDot {
+  height: 15px;
+  width: 15px;
+  border-radius: 100%;
+  margin-top: 11px;
+}

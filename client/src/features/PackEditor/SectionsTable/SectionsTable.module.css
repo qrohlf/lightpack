@@ -1,0 +1,47 @@
+.SectionsTable {
+  margin-bottom: 32px;
+  font-size: 14px;
+}
+
+.SectionsTableHeader,
+.SectionsTableRow,
+.SectionsTableFooter {
+  display: grid;
+  grid-template-columns: 1fr 70px;
+  gap: 16px;
+  line-height: 22px;
+}
+
+.SectionsTableHeader {
+  font-weight: 600;
+  text-transform: uppercase;
+  font-size: 11px;
+  border-bottom: 1px solid var(--border-color);
+  margin-bottom: 2px;
+}
+
+.SectionsTableRow {
+}
+
+.weight,
+.qty {
+  text-align: right;
+}
+
+.dot {
+  height: 10px;
+  width: 10px;
+  display: inline-block;
+  margin-right: 6px;
+  border-radius: 100%;
+}
+
+.SectionsTableFooter {
+  font-weight: 500;
+  text-align: right;
+}
+
+.SectionsTableFooter.first {
+  margin-top: 8px;
+  /*border-top: 1px solid var(--border-color);*/
+}

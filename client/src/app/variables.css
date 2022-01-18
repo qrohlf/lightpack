@@ -3,4 +3,12 @@
   --font-body: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica,
     Arial, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol';
   --font-monospace: ui-monospace, monospace;
+
+  --border-color: var(--oc-gray-4);
+
+  --text-color: var(--oc-gray-9);
+
+  --font-size-h1: 32px;
+  --font-size-h2: 24px;
+  --font-size-h3: 18px;
 }
