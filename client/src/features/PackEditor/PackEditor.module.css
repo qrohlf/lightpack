@@ -16,7 +16,7 @@
 
 .contentContainer {
   display: inline-block;
-  width: 100%;
+  width: minmax(auto, 100%);
   max-width: 900px;
   margin: 32px;
   text-align: left;
@@ -28,8 +28,9 @@
 }
 
 .sidePanel {
-  padding: 32px 15px;
+  padding: 32px 32px;
   height: 100%;
   overflow-y: auto;
   border-right: 1px solid var(--border-color);
+  /*background: linear-gradient(to bottom, var(--oc-blue-0), #fff);*/
 }

@@ -5,7 +5,7 @@ import { useQuery } from 'react-query'
 import { api } from 'lib/api'
 import { PackEditorSection } from './PackEditorSection'
 import { SectionsTable } from './SectionsTable'
-import { WaffleChart } from 'common/WaffleChart'
+import { PieChart } from 'common/PieChart'
 import { colorSchemes } from 'lib/colorSchemes'
 
 const colorScheme = colorSchemes.metro
@@ -23,13 +23,13 @@ export const PackEditor = ({ children }) => {
       <div className={styles.PackEditor}>
         <div className={styles.sidePanel}>
           {packQuery.isSuccess && (
-            <SectionsTable
+            <PieChart
               pack={packQuery.data.pack}
               colorForIndex={colorForIndex}
             />
           )}
           {packQuery.isSuccess && (
-            <WaffleChart
+            <SectionsTable
               pack={packQuery.data.pack}
               colorForIndex={colorForIndex}
             />

@@ -5,6 +5,7 @@
   align-items: center;
   border-bottom: 1px solid var(--oc-gray-2);
   box-shadow: 0 3px 8px 0 rgba(0, 0, 0, 0.08);
+  z-index: 1;
 }
 
 .logoContainer {
