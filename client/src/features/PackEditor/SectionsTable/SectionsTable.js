@@ -11,16 +11,11 @@ export const SectionsTable = ({ pack, colorForIndex }) => {
         <div className={styles.weight}>Weight</div>
       </div>
       {pack.packSections.map((s, i) => (
-        <SectionsTableRow section={s} color={colorForIndex(i)} />
+        <SectionsTableRow key={s.id} section={s} color={colorForIndex(i)} />
       ))}
       <div className={cx(styles.SectionsTableFooter, styles.first)}>
-        <div className={styles.totalName}>Total</div>
-        <div className={styles.weight}>
-          {getTotalWeight(pack).toLocaleString('en-US', {
-            maximumFractionDigits: 0,
-          })}{' '}
-          g
-        </div>
+        <div className={styles.totalName}>Base weight</div>
+        <div className={styles.weight}>0 g</div>
       </div>
       <div className={styles.SectionsTableFooter}>
         <div className={styles.totalName}>Consumable</div>
@@ -31,8 +26,13 @@ export const SectionsTable = ({ pack, colorForIndex }) => {
         <div className={styles.weight}>0 g</div>
       </div>
       <div className={styles.SectionsTableFooter}>
-        <div className={styles.totalName}>Base weight</div>
-        <div className={styles.weight}>0 g</div>
+        <div className={styles.totalName}>Total</div>
+        <div className={styles.weight}>
+          {getTotalWeight(pack).toLocaleString('en-US', {
+            maximumFractionDigits: 0,
+          })}{' '}
+          g
+        </div>
       </div>
     </div>
   )

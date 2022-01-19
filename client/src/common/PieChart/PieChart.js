@@ -2,6 +2,21 @@ import React from 'react'
 import styles from './PieChart.module.css'
 import { ResponsivePie } from '@nivo/pie'
 import { getSectionWeight } from 'lib/packUtils'
+import { TooltipWrapper } from '@nivo/tooltip'
+
+const Tooltip = ({ datum: { label, value, color } }) => (
+  <TooltipWrapper anchor="right" position={[0, 0]}>
+    <div className={styles.Tooltip}>
+      <div className={styles.label}>
+        <div className={styles.dot} style={{ background: color }} />
+        {label}
+      </div>
+      <div className={styles.value}>
+        {value.toLocaleString('en-US', { maximumFractionDigits: 1 })} g
+      </div>
+    </div>
+  </TooltipWrapper>
+)
 
 export const PieChart = ({ pack, colorForIndex }) => {
   const data = pack.packSections.map((section, i) => ({
@@ -27,7 +42,7 @@ export const PieChart = ({ pack, colorForIndex }) => {
         }}
         enableArcLabels={false}
         enableArcLinkLabels={false}
-        tooltip={() => null}
+        tooltip={Tooltip}
       />
     </div>
   )

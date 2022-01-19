@@ -4,15 +4,15 @@ import './variables.css'
 import './App.css'
 import { QueryClientProvider } from 'react-query'
 import { queryClient } from './queryClient'
-import { PackEditor } from 'features/PackEditor'
-import { LayoutFixed } from 'common/LayoutFixed'
+import { HelmetProvider } from 'react-helmet-async'
+import { Router } from './Router'
 
 export const App = () => {
   return (
-    <QueryClientProvider client={queryClient}>
-      <LayoutFixed>
-        <PackEditor />
-      </LayoutFixed>
-    </QueryClientProvider>
+    <HelmetProvider>
+      <QueryClientProvider client={queryClient}>
+        <Router />
+      </QueryClientProvider>
+    </HelmetProvider>
   )
 }

@@ -1,0 +1,38 @@
+.Button {
+  position: relative;
+  display: inline-block;
+  padding: 9px 15px;
+  border: none;
+  border-radius: 999px;
+  background: none;
+  font-size: 13px;
+  text-decoration: none;
+  transition: all 200ms, padding 300ms ease-in-out;
+  outline: none;
+  line-height: 1.4;
+  background: var(--oc-cyan-6);
+  color: #fff;
+  user-select: none;
+  cursor: default;
+}
+
+a.Button,
+a.Button:hover {
+  text-decoration: none;
+}
+
+.block {
+  display: block;
+  text-align: center;
+  width: 100%;
+}
+
+.Button:disabled {
+  cursor: default;
+  opacity: 0.5;
+}
+
+.Button:not(:disabled).hover,
+.Button:not(:disabled):hover {
+  background: var(--oc-cyan-5);
+}

@@ -6,6 +6,7 @@ import { api } from 'lib/api'
 import { PackEditorSection } from './PackEditorSection'
 import { SectionsTable } from './SectionsTable'
 import { PieChart } from 'common/PieChart'
+import { LayoutFixed } from 'common/LayoutFixed'
 import { colorSchemes } from 'lib/colorSchemes'
 
 const colorScheme = colorSchemes.metro
@@ -19,7 +20,7 @@ export const PackEditor = ({ children }) => {
     api.packs.show(token, packId),
   )
   return (
-    <>
+    <LayoutFixed>
       <div className={styles.PackEditor}>
         <div className={styles.sidePanel}>
           {packQuery.isSuccess && (
@@ -55,7 +56,7 @@ export const PackEditor = ({ children }) => {
         </div>
       </div>
       {/*<pre>{JSON.stringify(packQuery.data, null, '  ')}</pre>*/}
-    </>
+    </LayoutFixed>
   )
 }
 

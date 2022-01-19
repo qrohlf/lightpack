@@ -1,0 +1,48 @@
+.LoginPage {
+  height: 100%;
+  width: 100%;
+  background: url('./login-background.jpg');
+  background-size: cover;
+  background-position: right 65%;
+  /* prevent margin collapse:  */
+  padding: 0.1px;
+}
+
+.LoginPage h2 {
+  margin: 0 0 16px 0;
+}
+
+.FloatingBox {
+  margin: 7vh auto 60px auto;
+  background: #fff;
+  border-radius: 3px;
+  width: 350px;
+  box-shadow: 1px 1px 10px rgba(0, 0, 0, 0.15);
+}
+
+.header {
+  border-bottom: 1px solid hsl(0, 0%, 90%);
+  display: flex;
+  justify-content: stretch;
+}
+
+.content {
+  padding: 20px;
+}
+
+.headerLink,
+.headerLink:visited,
+.headerLink:active {
+  padding: 10px;
+  display: inline-block;
+  flex: 1 0 auto;
+  text-align: center;
+  color: hsl(0, 0%, 50%);
+  border-bottom: 1px solid transparent;
+  margin-bottom: -1px;
+}
+
+.headerLink.active {
+  color: hsl(0, 0%, 20%);
+  border-bottom: 1px solid #6aa5e1;
+}

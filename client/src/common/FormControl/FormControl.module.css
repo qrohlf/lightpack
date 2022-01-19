@@ -1,0 +1,46 @@
+.FormControl label {
+  display: block;
+  margin: 0 0 2px 0;
+  font-weight: 400;
+  font-size: 11px;
+  text-transform: uppercase;
+  color: hsl(0, 0%, 60%);
+}
+
+.FormControl input {
+  display: block;
+  width: 100%;
+  margin: 0 0 15px 0;
+  font-size: 1rem;
+  padding: 10px 15px;
+  border: 1px solid hsl(0, 0%, 90%); /* $color-border-normal */
+  border-radius: 20px;
+  color: inherit;
+  transition: border 200ms ease;
+  line-height: 1;
+}
+
+.FormControl input::placeholder {
+  color: hsl(0, 0%, 60%);
+}
+
+.FormControl input,
+.FormControl input:focus,
+.FormControl input:active {
+  outline: none;
+}
+
+.FormControl input:focus,
+.FormControl input:hover {
+  color: #424242;
+  border-color: hsl(0, 0%, 80%); /* $color-border-focus */
+}
+
+.FormControl.inline {
+  display: inline-block;
+  margin: 0 0;
+}
+
+.FormControl.inline input {
+  margin: 0 0;
+}

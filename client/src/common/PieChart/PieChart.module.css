@@ -2,3 +2,36 @@
   aspect-ratio: 1;
   margin-bottom: 32px;
 }
+
+.Tooltip {
+  z-index: 1;
+  background: #fff;
+  font-size: 12px;
+  border-radius: 4px;
+  box-shadow: 0 0 2px 0 rgba(0, 0, 0, 0.4), 0 3px 8px 0 rgba(0, 0, 0, 0.08);
+}
+
+.Tooltip .dot {
+  height: 10px;
+  width: 10px;
+  border-radius: 100%;
+  margin-right: 4px;
+}
+
+.Tooltip .label {
+  display: flex;
+  align-items: center;
+  padding: 4px 8px 2px 8px;
+  white-space: nowrap;
+  margin-bottom: 2px;
+  font-size: 9px;
+  text-transform: uppercase;
+  font-weight: 500;
+  border-bottom: 1px solid var(--border-color);
+}
+
+.Tooltip .value {
+  padding: 4px 8px;
+  white-space: nowrap;
+  text-align: center;
+}
