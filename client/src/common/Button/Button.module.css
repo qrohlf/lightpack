@@ -36,3 +36,7 @@ a.Button:hover {
 .Button:not(:disabled):hover {
   background: var(--oc-cyan-5);
 }
+
+.Button.loading {
+  /*todo*/
+}

@@ -2,7 +2,7 @@
 
 ## TODO
 
-- auth & login
+- auth & login (maybe use https://github.com/radix-ui/primitives for popovers?)
 - pack editing
 - description display
 - weight conversions

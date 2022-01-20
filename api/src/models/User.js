@@ -2,7 +2,7 @@ import bcrypt from 'bcryptjs'
 import { transaction } from 'objection'
 import Model from 'src/lib/Model.js'
 import Pack from 'src/models/Pack.js'
-import ApiToken from 'src/models/ApiToken.js'
+import APIToken from 'src/models/APIToken.js'
 import serializer from 'src/lib/serializer.js'
 
 export default class User extends Model {
@@ -22,7 +22,7 @@ export default class User extends Model {
       },
       apiTokens: {
         relation: Model.HasManyRelation,
-        modelClass: ApiToken,
+        modelClass: APIToken,
         join: {
           from: 'apiTokens.userId',
           to: 'users.id',
@@ -44,7 +44,7 @@ export default class User extends Model {
     // eslint-disable-next-line
     return transaction(knex, async (tx) => {
       await User.query().patchAndFetchById(this.id, { password: newPassword })
-      const expired = await ApiToken.query().where({ userId: this.id }).delete()
+      const expired = await APIToken.query().where({ userId: this.id }).delete()
       console.log(`expired ${expired} tokens as part of a password change`)
     })
   }

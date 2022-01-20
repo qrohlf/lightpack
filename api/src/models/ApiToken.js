@@ -39,7 +39,7 @@ export default class APIToken extends Model {
     // 1. sha256 the incoming token
     const tokenHash = sha256(token)
     // 2. lookup the token hash in the cache
-    return APIToken.query().eager('user').findOne({ tokenHash })
+    return APIToken.query().withGraphFetched('user').findOne({ tokenHash })
     // 3. on cache miss, lookup the token hash in the database
     //
     // note: the cache part will probably be ommitted in the first version of this

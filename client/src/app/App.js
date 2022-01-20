@@ -5,13 +5,16 @@ import './App.css'
 import { QueryClientProvider } from 'react-query'
 import { queryClient } from './queryClient'
 import { HelmetProvider } from 'react-helmet-async'
+import { AuthProvider } from 'hooks/useAuth'
 import { Router } from './Router'
 
 export const App = () => {
   return (
     <HelmetProvider>
       <QueryClientProvider client={queryClient}>
-        <Router />
+        <AuthProvider>
+          <Router />
+        </AuthProvider>
       </QueryClientProvider>
     </HelmetProvider>
   )

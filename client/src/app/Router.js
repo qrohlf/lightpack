@@ -3,9 +3,16 @@ import { Helmet } from 'react-helmet-async'
 import { PackEditor } from 'features/PackEditor'
 import { LoginPage } from 'features/LoginPage'
 import { NotFoundPage } from 'features/NotFoundPage'
+import { LighterpackImportPage } from 'features/LighterpackImportPage'
+import { useAuthState } from 'hooks/useAuth'
 
 const commonRoutes = [
   <Route key="packView" path="/p/:packId" element={<PackEditor readonly />} />,
+  <Route
+    key="lpImport"
+    path="/r/:lighterpackId"
+    element={<LighterpackImportPage />}
+  />,
 ]
 
 const loggedInRoutes = (
@@ -21,7 +28,6 @@ const publicRoutes = (
   <Routes>
     <Route path="/login" element={<LoginPage isLogin />} />
     <Route path="/signup" element={<LoginPage />} />
-    <Route path="/pack/:packId" element={<PackEditor />} />
     {commonRoutes}
     {/* Catch-all 404 page route */}
     <Route component={NotFoundPage} />
@@ -29,7 +35,7 @@ const publicRoutes = (
 )
 
 export const Router = () => {
-  const currentUser = null
+  const { currentUser } = useAuthState()
   return (
     <BrowserRouter>
       <Helmet defaultTitle="Lightpack" titleTemplate="%s · Lightpack" />

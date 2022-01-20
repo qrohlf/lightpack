@@ -22,8 +22,8 @@ export const Button = ({ children, className, ...allProps }) => {
   // TODO loading state with spinner!
 
   return (
-    <div className={cx(styles.Button, className, ...classNames)} {...props}>
+    <button className={cx(styles.Button, className, ...classNames)} {...props}>
       {children}
-    </div>
+    </button>
   )
 }

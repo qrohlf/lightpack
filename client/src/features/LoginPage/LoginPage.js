@@ -1,10 +1,11 @@
-import React from 'react'
+import React, { useState } from 'react'
 import styles from './LoginPage.module.css'
 import { LayoutFixed } from 'common/LayoutFixed'
-import { NavLink } from 'react-router-dom'
+import { NavLink, useNavigate } from 'react-router-dom'
 import cx from 'classnames'
 import { FormControl } from 'common/FormControl'
 import { Button } from 'common/Button'
+import { useAuth } from 'hooks/useAuth'
 
 export const LoginPage = ({ children, isLogin }) => {
   return (
@@ -55,7 +56,7 @@ const SignupForm = () => {
           <input type="password" value={password} onChange={() => {}} />
         </FormControl>
         <FormError error={error} />
-        <Button block loading={loading} primary type="submit">
+        <Button block loading={loading} type="submit">
           Sign Up
         </Button>
       </form>
@@ -64,25 +65,43 @@ const SignupForm = () => {
 }
 
 const LoginForm = () => {
-  const email = ''
+  const auth = useAuth()
+  const navigate = useNavigate()
+  const [email, setEmail] = useState('')
+  const [password, setPassword] = useState('')
+
+  // dummy stuff
   const error = ''
-  const password = ''
   const FormError = (props) => <div {...props} />
   const loading = false
+
+  const onSubmit = (e) => {
+    e.preventDefault()
+    auth.login({ email, password }).then(() => navigate('/pack/1'))
+  }
+
   return (
     <div className={styles.content}>
       <h2>Log in</h2>
-      <form className={styles.form} onSubmit={() => {}}>
+      <form className={styles.form} onSubmit={onSubmit}>
         <FormControl>
           <label>Email</label>
-          <input type="email" value={email} onChange={() => {}} />
+          <input
+            type="email"
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
+          />
         </FormControl>
         <FormControl>
           <label>Password</label>
-          <input type="password" value={password} onChange={() => {}} />
+          <input
+            type="password"
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
+          />
         </FormControl>
         <FormError error={error} />
-        <Button block loading={loading} primary type="submit">
+        <Button block loading={loading} type="submit">
           Log In
         </Button>
       </form>

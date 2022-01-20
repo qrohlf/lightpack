@@ -1,8 +1,11 @@
 import React from 'react'
 import styles from './Navbar.module.css'
 import { Link } from 'react-router-dom'
+import { useAuth } from 'hooks/useAuth'
+import { Button } from 'common/Button'
 
 export const Navbar = ({ children }) => {
+  const { authState: currentUser, logout } = useAuth()
   return (
     <div className={styles.Navbar}>
       <div className={styles.logoContainer}>
@@ -10,9 +13,13 @@ export const Navbar = ({ children }) => {
         <h1 className={styles.siteTitle}>Lightpack</h1>
       </div>
       <div>
-        <Link to="/signup" data-appearance="button">
-          Sign Up
-        </Link>
+        {/* fixme do the profile dropdown thing */}
+        {currentUser && <Button onClick={logout}>Sign Out</Button>}
+        {!currentUser && (
+          <Link to="/signup" data-appearance="button">
+            Sign Up
+          </Link>
+        )}
       </div>
     </div>
   )
