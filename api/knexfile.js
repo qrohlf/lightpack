@@ -9,6 +9,6 @@ export default {
   },
   migrations: {
     tableName: 'knex_migrations',
-    stub: 'src/lib/migrationTemplate.js',
+    stub: './src/lib/migrationTemplate.js',
   },
 }

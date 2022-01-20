@@ -1,7 +1,9 @@
 import bcrypt from 'bcryptjs'
+import { transaction } from 'objection'
 import Model from 'src/lib/Model.js'
 import Pack from 'src/models/Pack.js'
-import { transaction } from 'objection'
+import ApiToken from 'src/models/ApiToken.js'
+import serializer from 'src/lib/serializer.js'
 
 export default class User extends Model {
   static get tableName() {
@@ -18,6 +20,14 @@ export default class User extends Model {
           to: 'users.id',
         },
       },
+      apiTokens: {
+        relation: Model.HasManyRelation,
+        modelClass: ApiToken,
+        join: {
+          from: 'apiTokens.userId',
+          to: 'users.id',
+        },
+      },
     }
   }
 
@@ -30,14 +40,18 @@ export default class User extends Model {
   }
 
   changePassword(newPassword) {
-    const { APIToken } = require('./api_token')
-
     // TODO - pass tx into the appropriate spot here.
     // eslint-disable-next-line
     return transaction(knex, async (tx) => {
       await User.query().patchAndFetchById(this.id, { password: newPassword })
-      const expired = await APIToken.query().where({ userId: this.id }).delete()
+      const expired = await ApiToken.query().where({ userId: this.id }).delete()
       console.log(`expired ${expired} tokens as part of a password change`)
     })
+  }
+
+  $formatJson() {
+    const serialize = serializer(serializer.include('id', 'email'))
+
+    return serialize(this)
   }
 }
