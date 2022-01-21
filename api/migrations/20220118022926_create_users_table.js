@@ -8,6 +8,7 @@ export const up = (knex) =>
 
     t.string('email', 1024).unique().notNullable()
     t.string('passwordHash', 1024).notNullable()
+    t.enu('role', ['user', 'admin', 'superuser']).notNull().defaultTo('user')
   })
 
 export const down = (knex) => knex.schema.dropTable('users')

@@ -14,13 +14,19 @@ const colorScheme = colorSchemes.metro
 
 const colorForIndex = (i) => colorScheme[i % colorScheme.length]
 
-export const PackEditor = ({ children }) => {
-  const { packId } = useParams()
+export const PackEditor = ({ children, readonly }) => {
+  const { shareId, packId } = useParams()
   const api = useApi()
 
-  const packQuery = useQuery([queryConstants.PACKS.SHOW, packId], () =>
-    api.packs.show({ packId }),
-  )
+  const getPack = readonly
+    ? () => api.packs.showPublic({ shareId })
+    : () => api.packs.show({ packId })
+
+  const cacheKey = readonly
+    ? queryConstants.PACKS.SHOW_PUBLIC
+    : queryConstants.PACKS.SHOW
+
+  const packQuery = useQuery([cacheKey, packId], getPack)
 
   return (
     <LayoutFixed>
@@ -66,6 +72,6 @@ export const PackEditor = ({ children }) => {
 const Header = ({ pack }) => (
   <div className={styles.Header}>
     <h1>{pack.name}</h1>
-    {/*<p>{pack.description}</p>*/}
+    <p>Public link: /p/{pack.shareId}</p>
   </div>
 )

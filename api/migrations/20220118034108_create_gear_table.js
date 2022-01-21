@@ -17,8 +17,13 @@ export const up = (knex) =>
     t.string('name', 1024).notNullable().defaultTo('')
     t.string('emoji', 1).notNullable().defaultTo('')
     t.text('description').notNullable().defaultTo('')
+    t.string('link').notNullable().defaultTo('')
 
+    t.integer('qty').notNullable().defaultTo(1)
     t.float('grams').notNullable().defaultTo(0)
+
+    t.boolean('worn').notNullable().defaultTo(false)
+    t.boolean('consumable').notNullable().defaultTo(false)
   })
 
 export const down = (knex) => knex.schema.dropTable('gear')

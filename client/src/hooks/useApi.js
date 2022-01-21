@@ -32,6 +32,7 @@ export const useApi = () => {
     },
     packs: {
       show: ({ packId }) => req.get(`packs/${packId}`),
+      showPublic: ({ shareId }) => req.get(`packs/public/${shareId}`),
     },
   }
 }

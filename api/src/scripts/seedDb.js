@@ -1,16 +1,19 @@
 import knex from 'src/lib/knex.js'
 import Pack from 'src/models/Pack.js'
 import User from 'src/models/User.js'
-import PackSection from 'src/models/PackSection.js'
-import Gear from 'src/models/Gear.js'
-
-// helpers
 
 const seedDb = async () => {
   try {
     const user = await User.query().insert({
       email: 'qrohlf@gmail.com',
       password: 'password',
+      role: 'superuser',
+    })
+
+    // seed LP_IMPORT_USER
+    await User.query().insert({
+      email: 'lpimport@lightpack.club',
+      password: '2ZeWRp6_WbL2ccuEMk',
     })
 
     await Pack.query().insertGraph({

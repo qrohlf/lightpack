@@ -8,7 +8,7 @@ import { LighterpackImportPage } from 'features/LighterpackImportPage'
 import { useAuthState } from 'hooks/useAuth'
 
 const commonRoutes = [
-  <Route key="packView" path="/p/:packId" element={<PackEditor readonly />} />,
+  <Route key="packView" path="/p/:shareId" element={<PackEditor readonly />} />,
   <Route
     key="lpImport"
     path="/r/:lighterpackId"
