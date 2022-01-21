@@ -5,7 +5,10 @@ import { useAuth } from 'hooks/useAuth'
 import { Button } from 'common/Button'
 
 export const Navbar = ({ children }) => {
-  const { authState: currentUser, logout } = useAuth()
+  const {
+    authState: { currentUser },
+    logout,
+  } = useAuth()
   return (
     <div className={styles.Navbar}>
       <div className={styles.logoContainer}>

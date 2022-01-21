@@ -1,6 +1,7 @@
 export const up = (knex) =>
   knex.schema.createTable('packs', function (t) {
     t.increments()
+    t.string('shareId', 16).notNullable().unique().index()
 
     t.timestamp('createdAt').notNullable().defaultTo(knex.fn.now())
 

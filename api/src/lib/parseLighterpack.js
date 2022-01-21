@@ -9,7 +9,7 @@ export default (lighterpackHtml) => {
 
   // TODO - stop using innerHTML here, use textContent instead and properly
   // replace the <br> elements
-  const description = [...descriptionNode.children]
+  const description = [...(descriptionNode?.children || [])]
     .map((p) => p.innerHTML.replace('<br>', '\n'))
     .join('\n\n')
 

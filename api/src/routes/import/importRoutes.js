@@ -8,10 +8,11 @@ const log = _log('IMPORT')
 const app = express.Router()
 
 app.post('/lighterpack', async (req, res) => {
-  const lighterpackId = req.body.id
+  const lighterpackId = req.body.lighterpackId
   const url = `https://lighterpack.com/r/${lighterpackId}`
-  log(`fetching ${url}`)
+  log.info(`fetching ${url}`)
   const lpResponse = await fetch(url).then((r) => r.text())
+  log.info(lpResponse)
   const parsed = parseLighterpack(lpResponse)
 
   const pack = await Pack.query().insertGraph({

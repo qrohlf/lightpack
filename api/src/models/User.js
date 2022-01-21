@@ -50,7 +50,7 @@ export default class User extends Model {
   }
 
   $formatJson() {
-    const serialize = serializer(serializer.include('id', 'email'))
+    const serialize = serializer(serializer.include('id', 'email', 'packs'))
 
     return serialize(this)
   }

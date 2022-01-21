@@ -36,7 +36,7 @@ export const useAuth = () => {
         .login({ email, password })
         .then(({ user, token }) => setAuthState({ currentUser: user, token })),
     logout: () =>
-      api.auth.logout().then(() => {
+      api.auth.logout().finally(() => {
         setAuthState({ currentUser: null, token: null })
         navigate('/login')
       }),

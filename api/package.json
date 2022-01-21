@@ -14,7 +14,8 @@
     "db.seed": "node src/scripts/seedDb.js",
     "db.migration": "knex migrate:make",
     "db.migrate": "knex migrate:latest",
-    "db.rebuild": "yarn db.drop && yarn db.create && yarn db.migrate && yarn db.seed"
+    "db.rebuild": "yarn db.drop && yarn db.create && yarn db.migrate && yarn db.seed",
+    "console": "node --experimental-repl-await src/scripts/console.cjs"
   },
   "author": "Quinn Rohlf",
   "license": "UNLICENSED",

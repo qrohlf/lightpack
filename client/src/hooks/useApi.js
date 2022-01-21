@@ -13,6 +13,11 @@ export const useApi = () => {
         headers: authHeader,
         method: 'POST',
       }),
+    get: (path, params) =>
+      fetchJSON(API_ENDPOINT + path, null, {
+        headers: authHeader,
+        method: 'GET',
+      }),
   }
 
   return {
@@ -20,6 +25,13 @@ export const useApi = () => {
       login: ({ email, password }) =>
         req.post('auth/login', { email, password }),
       logout: () => req.post('auth/logout'),
+    },
+    import: {
+      lighterpack: ({ lighterpackId }) =>
+        req.post('import/lighterpack', { lighterpackId }),
+    },
+    packs: {
+      show: ({ packId }) => req.get(`packs/${packId}`),
     },
   }
 }
