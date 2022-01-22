@@ -10,7 +10,7 @@ export const PackEditorSection = ({ section, color }) => {
       </div>
       <div className={styles.mainContent}>
         <h2>{section.name}</h2>
-        <GearItemsTable gear={section.gear} />
+        <GearItemsTable section={section} />
       </div>
     </div>
   )

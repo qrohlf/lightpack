@@ -23,6 +23,12 @@
 .SectionsTableRow {
 }
 
+.sectionName {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
 .weight,
 .qty {
   text-align: right;

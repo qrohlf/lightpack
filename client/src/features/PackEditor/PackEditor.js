@@ -17,16 +17,23 @@ const colorScheme = colorSchemes.metro
 const colorForIndex = (i) => colorScheme[i % colorScheme.length]
 
 export const PackEditor = ({ children, readonly }) => {
-  const { shareId, packId } = useParams()
+  const { shareId, packId: _packId } = useParams()
+  const packId = +_packId
   const api = useApi()
 
-  const getPack = readonly
-    ? () => api.packs.showPublic({ shareId })
-    : () => api.packs.show({ packId })
+  const publicQuery = useQuery(
+    [queryConstants.PACKS.SHOW, shareId],
+    () => api.packs.showPublic({ shareId }),
+    { enabled: !!readonly },
+  )
 
-  const cacheKey = queryConstants.PACKS.SHOW
+  const loggedInQuery = useQuery(
+    [queryConstants.PACKS.SHOW, packId],
+    () => api.packs.show({ id: packId }),
+    { enabled: !readonly },
+  )
 
-  const packQuery = useQuery([cacheKey, packId], getPack)
+  const packQuery = readonly ? publicQuery : loggedInQuery
 
   return (
     <LoadablePage query={packQuery}>

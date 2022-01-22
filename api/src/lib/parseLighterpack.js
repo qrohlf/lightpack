@@ -24,7 +24,10 @@ export default (lighterpackHtml) => {
         .textContent.trim()
       const weightMg = gearNode.querySelector('.lpMG')?.value
       const grams = weightMg / 1000 || 0
-      return { name, description, grams }
+      const worn = !!gearNode.querySelector('.lpWorn.lpActive')
+      const consumable = !!gearNode.querySelector('.lpConsumable.lpActive')
+      const qty = parseInt(gearNode.querySelector('.lpQtyCell').textContent, 10)
+      return { name, description, grams, worn, consumable, qty }
     })
     return { name, gear }
   })

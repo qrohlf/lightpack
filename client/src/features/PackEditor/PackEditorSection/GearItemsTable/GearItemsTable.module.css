@@ -3,9 +3,10 @@
 }
 
 .GearHeader,
-.GearRow {
+.GearRow,
+.GearFooter {
   display: grid;
-  grid-template-columns: 2fr 3fr 60px 30px;
+  grid-template-columns: 2fr 3fr auto 60px 30px;
   gap: 16px;
   line-height: 22px;
 }
@@ -27,6 +28,17 @@
   text-align: right;
 }
 
+input.qty {
+  -webkit-appearance: textfield;
+  -moz-appearance: textfield;
+  appearance: textfield;
+}
+
+input.qty::-webkit-inner-spin-button,
+input.qty::-webkit-outer-spin-button {
+  -webkit-appearance: none;
+}
+
 .description {
   color: var(--oc-gray-6);
 }
@@ -42,4 +54,43 @@
 .EditableField:hover,
 .EditableField:focus {
   border: 1px solid var(--oc-gray-3);
+}
+
+.modifierEmoji {
+  cursor: default;
+  opacity: 0;
+  font-size: 18px;
+  margin-left: 8px;
+  transition: opacity 150ms ease;
+}
+
+.GearRow:hover .modifierEmoji {
+  opacity: 0.35;
+}
+.GearRow:hover .modifierEmoji[data-active='true'],
+.modifierEmoji[data-active='true'] {
+  opacity: 1;
+}
+
+/* footer styles */
+.GearFooter {
+  font-weight: 500;
+  /* margin-top should match SectionsTable  */
+  margin-top: 8px;
+  position: relative;
+}
+
+.GearFooter:before {
+  display: block;
+  content: '';
+  position: absolute;
+  right: 0;
+  top: -4px;
+  height: 0;
+  width: 106px;
+  border-bottom: 1px solid var(--oc-gray-3);
+}
+
+.totalLabel {
+  text-align: right;
 }

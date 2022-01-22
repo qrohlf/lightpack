@@ -14,11 +14,11 @@ export const LighterpackImportPage = () => {
   // TODO refactor to useMutation
   useEffectOnce(() => {
     api.import.lighterpack({ lighterpackId }).then((result) => {
-      const { pack } = result
+      const { packId } = result
       // prime the cache?
       currentUser
-        ? navigate(`/packs/${pack.id}`) // user is logged in, we should go ahead and show them the editor
-        : navigate(`/p/${pack.id}`) // no user logged in, show the read-only view
+        ? navigate(`/packs/${packId}`, { replace: true }) // user is logged in, we should go ahead and show them the editor
+        : navigate(`/p/${packId}`, { replace: true }) // no user logged in, show the read-only view
     })
   })
 

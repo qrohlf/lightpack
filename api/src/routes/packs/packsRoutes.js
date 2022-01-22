@@ -1,6 +1,7 @@
 import express from 'express'
 import Pack from 'src/models/Pack.js'
 import requireAuth from 'src/lib/middleware/requireAuth.js'
+import objection from 'objection'
 const app = express.Router()
 
 const findPack = async (req, res, next) => {
@@ -32,14 +33,31 @@ app.get('/', requireAuth, async (req, res) => {
 })
 
 app.get('/:packId', requireAuth, findPack, async (req, res) => {
+  const pack = await req.pack.$query().withGraphJoined('packSections.gear')
+
+  // inject packId
+  for (const packSection of pack.packSections) {
+    for (const gear of packSection.gear) {
+      gear.packId = pack.id
+    }
+  }
+
   res.json({
-    pack: await req.pack.$query().withGraphFetched('packSections.gear'),
+    pack,
   })
 })
 
 app.get('/public/:shareId', findPackByShareId, async (req, res) => {
+  const pack = await req.pack.$query().withGraphFetched('packSections.gear')
+
+  // inject packId
+  for (const packSection of pack.packSections) {
+    for (const gear of packSection.gear) {
+      gear.packId = pack.id
+    }
+  }
   res.json({
-    pack: await req.pack.$query().withGraphFetched('packSections.gear'),
+    pack,
   })
 })
 

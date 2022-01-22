@@ -16,6 +16,16 @@ export const up = (knex) =>
       .references('id')
       .inTable('users')
       .onDelete('CASCADE')
+
+    t.enu('weightUnitsTotal', ['g', 'kg', 'oz', 'lbs'])
+      .notNull()
+      .defaultTo('lbs')
+
+    t.enu('weightUnitsSection', ['g', 'kg', 'oz', 'lbs'])
+      .notNull()
+      .defaultTo('lbs')
+
+    t.enu('weightUnitsGear', ['g', 'kg', 'oz', 'lbs']).notNull().defaultTo('oz')
   })
 
 export const down = (knex) => knex.schema.dropTable('packs')

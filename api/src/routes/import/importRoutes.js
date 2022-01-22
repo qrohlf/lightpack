@@ -28,11 +28,12 @@ app.post('/lighterpack', async (req, res) => {
   const parsed = parseLighterpack(lpResponse)
 
   const pack = await Pack.query().insertGraph({
-    userId: LP_IMPORT_USER,
+    userId: 1, // TODO use LP_IMPORT_USER,
     ...parsed,
   })
 
-  res.json({ pack })
+  // TODO - respond with shareId
+  res.json({ packId: pack.id })
 })
 
 export default app

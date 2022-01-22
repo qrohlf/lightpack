@@ -30,7 +30,7 @@ export const PackIndexPage = () => {
 
 const PackList = ({ packs }) =>
   packs.map((p) => (
-    <div className={styles.PackListItem}>
+    <div key={p.id} className={styles.PackListItem}>
       <Link to={`/packs/${p.id}`}>{p.name}</Link>
     </div>
   ))
