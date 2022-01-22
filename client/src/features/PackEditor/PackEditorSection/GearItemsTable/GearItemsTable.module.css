@@ -67,6 +67,11 @@
 .GearRow:hover .modifierEmoji {
   opacity: 0.35;
 }
+
+.GearRow:hover .modifierEmoji:hover {
+  opacity: 0.6;
+}
+
 .GearRow:hover .modifierEmoji[data-active='true'],
 .modifierEmoji[data-active='true'] {
   opacity: 1;

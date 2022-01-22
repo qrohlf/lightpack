@@ -1,6 +1,6 @@
 # Lightpack-client
 
-## TODO
+### Done
 
 - ✅ basic auth & login
 - ✅ errors in routes should NOT crash the server
@@ -8,38 +8,44 @@
 - ✅ pack editing
 - ✅ worn/consumable/baseweight calculations
 - ✅ fetch qty from Lighterpack when importing
+- ✅ weight editing (this one is a bit tricky)
 - ✅ weight conversions
 
+### TODO: Polish up the PackEditor
+
+- description display (and fix LP description import)
+- allow the user to change weight display on a per-type basis
+- replace all instances of a weight unit string (e.g. 'oz') with a WeightUnitsSelect
+- implement re-ordering of items
+- implement add item (with tab-to-add support!)
+- implement re-ordering of sections
+- implement add section
 - tooltips (for stuff like worn/consumable/base)
-- about page
-- save weight preference to pack
-- read-only mode
-- weight editing (this one is a bit tricky)
-- add item (with tab-to-add support!)
-- add section
-- re-order items
-- re-order sections
-- account dropdown
-- import page
-- copy list
 
+### TODO: Polish up the UI
+
+- port the Popover/PopoverMenu over from Trailhead.club
+- implment list select dropdown in navbar (model it after Scout Maps' map dropdown)
+- implement account dropdown (again, scoutmaps style)
+- implement create list flow
+- tweak the share/options buttons to look less dumb
+- implement copy list feature
+
+### TODO: Work on the onboarding story
+
+- polish up the Lighterpack import flow for both logged-out and logged-in users
 - landing page (just a screenshot of the app on some kind of nice mountain backdrop)
-- pack dropdown? (model it after Scout Maps' map dropdown)
-- profile dropdown (maybe use https://github.com/radix-ui/primitives for popovers?)
-- description display (and fix description import)
+- write about page
+
+### TODO: Final bits
+
+- implement read-only share mode
+- implement import page
 - add "colorScheme" to packs table, and add user color editing
+- system font fallback for non-MacOS users (use https://fonts.google.com/specimen/Roboto as fallback)
+- emoji font fallback for non-MacOS users (use joypixels or similar) - https://demos.joypixels.com/latest/joypixels-web-font.html
+- settings interface + password reset
 
-- font pack (use https://fonts.google.com/specimen/Roboto as fallback)
-- emoji font
-- settings interface
-- have a peek at https://github.com/galenmaly/lighterpack/issues
+### TODO: And beyond?
 
-# Emoji
-
-use an emoji fallback!
-
-https://demos.joypixels.com/latest/joypixels-web-font.html
-
-Sensa seems good?
-
-https://sensa.co/emoji/
+- have a peek at https://github.com/galenmaly/lighterpack/issues to find some cool features?

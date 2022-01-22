@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react'
+import React, { useState } from 'react'
 import styles from './GearItemsTable.module.css'
 import cx from 'classnames'
 import { useThrottle } from 'hooks/useThrottle'
@@ -130,7 +130,9 @@ EditableField.defaultProps = {
   throttle: 1000,
 }
 
-const isNumeral = '01234567090'.split('').reduce((map, c) => {
+// FIXME all the stuff below should really be in its own component
+
+const isNumeral = '1234567890'.split('').reduce((map, c) => {
   map[c] = true
   return map
 }, {})
@@ -160,15 +162,22 @@ const toGrams = (float, units) => {
 const WeightEditor = ({ gear }) => {
   const api = useApi()
 
+  // TODO - power this with the units context
   const initialValue = toOz(gear.grams).toLocaleString('en', {
     useGrouping: false,
-    maxmimumFractionDigits: 2,
+    maximumFractionDigits: 2,
   })
   const [string, setString] = useState(initialValue)
+
+  // reset to our authoritative value on blur, rather than retaining N sig figs
+  const onBlur = () => {
+    setString(initialValue)
+  }
   const units = 'oz'
 
   const onChange = (e) => {
     const str = filterChars(e.target.value)
+    console.log({ str })
     setString(str)
     const parsed = parseFloat(str)
     if (Number.isFinite(parsed)) {
@@ -185,8 +194,11 @@ const WeightEditor = ({ gear }) => {
         value={'' + string}
         className={cx(styles.EditableField, styles.weightEditorInput)}
         onChange={onChange}
+        onBlur={onBlur}
       />
       <select value={units} onChange={onChangeUnits} tabIndex="-1">
+        <option value="g">g</option>
+        <option value="kg">kg</option>
         <option value="oz">oz</option>
         <option value="lb">lb</option>
       </select>

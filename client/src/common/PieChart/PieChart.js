@@ -19,12 +19,14 @@ const Tooltip = ({ datum: { label, value, color } }) => (
 )
 
 export const PieChart = ({ pack, colorForIndex }) => {
-  const data = pack.packSections.map((section, i) => ({
-    id: section.id,
-    label: section.name,
-    value: getSectionWeight(section),
-    color: colorForIndex(i),
-  }))
+  const data = pack.packSections
+    .map((section, i) => ({
+      id: section.id,
+      label: section.name,
+      value: getSectionWeight(section),
+      color: colorForIndex(i),
+    }))
+    .filter(({ value }) => value > 0)
   return (
     <div className={styles.PieChart}>
       <ResponsivePie
