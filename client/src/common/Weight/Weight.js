@@ -1,7 +1,7 @@
 // import React from 'react'
 
-const toOz = (g) => g * 0.03527396195
-const toLb = (g) => g * 0.0022046226
+export const toOz = (g) => g * 0.03527396195
+export const toLb = (g) => g * 0.0022046226
 
 // TODO FIXME
 const useWeightUnits = (type) => {

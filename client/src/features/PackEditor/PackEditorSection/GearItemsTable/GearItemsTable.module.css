@@ -6,7 +6,7 @@
 .GearRow,
 .GearFooter {
   display: grid;
-  grid-template-columns: 2fr 3fr auto 60px 30px;
+  grid-template-columns: 2fr 3fr auto auto 30px;
   gap: 16px;
   line-height: 22px;
 }
@@ -28,14 +28,14 @@
   text-align: right;
 }
 
-input.qty {
+.GearItemsTable input[type='number'] {
   -webkit-appearance: textfield;
   -moz-appearance: textfield;
   appearance: textfield;
 }
 
-input.qty::-webkit-inner-spin-button,
-input.qty::-webkit-outer-spin-button {
+.GearItemsTable input[type='number']::-webkit-inner-spin-button,
+.GearItemsTable input[type='number']::-webkit-outer-spin-button {
   -webkit-appearance: none;
 }
 
@@ -70,6 +70,33 @@ input.qty::-webkit-outer-spin-button {
 .GearRow:hover .modifierEmoji[data-active='true'],
 .modifierEmoji[data-active='true'] {
   opacity: 1;
+}
+
+.WeightEditor {
+  text-align: right;
+}
+
+.weightEditorInput {
+  width: 50px;
+  text-align: right;
+}
+
+.WeightEditor select {
+  font-size: inherit;
+  padding: 0 0;
+  border: none;
+  outline: none;
+  border: 1px solid transparent;
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  width: 20px;
+  text-align: right;
+}
+
+.WeightEditor select:hover,
+.WeightEditor select:active,
+.WeightEditor select:focus {
+  border: 1px solid var(--oc-gray-3);
 }
 
 /* footer styles */

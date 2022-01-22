@@ -4,7 +4,7 @@ import cx from 'classnames'
 import { useThrottle } from 'hooks/useThrottle'
 import { useApi } from 'hooks/useApi'
 import { getSectionWeight, getSectionQty } from 'lib/packUtils'
-import { Weight } from 'common/Weight'
+import { Weight, toOz } from 'common/Weight'
 
 export const GearItemsTable = ({ section }) => {
   const gear = section.gear
@@ -81,7 +81,7 @@ const GearRow = ({ gear }) => {
         </span>
       </div>
       <div className={styles.weight}>
-        <Weight g={gear.grams} type="gear" />
+        <WeightEditor gear={gear} />
       </div>
       <EditableField
         className={styles.qty}
@@ -128,4 +128,68 @@ const EditableField = ({
 
 EditableField.defaultProps = {
   throttle: 1000,
+}
+
+const isNumeral = '01234567090'.split('').reduce((map, c) => {
+  map[c] = true
+  return map
+}, {})
+
+const filterChars = (str) => {
+  let newStr = []
+  let hasDecimal = false
+  for (const c of str) {
+    if (isNumeral[c]) {
+      newStr.push(c)
+    }
+    if (c === '.' && !hasDecimal) {
+      hasDecimal = true
+      newStr.push(c)
+    }
+  }
+  return newStr.join('')
+}
+
+const toGrams = (float, units) => {
+  if (units !== 'oz') {
+    throw Error()
+  }
+  return float / 0.03527396195
+}
+
+const WeightEditor = ({ gear }) => {
+  const api = useApi()
+
+  const initialValue = toOz(gear.grams).toLocaleString('en', {
+    useGrouping: false,
+    maxmimumFractionDigits: 2,
+  })
+  const [string, setString] = useState(initialValue)
+  const units = 'oz'
+
+  const onChange = (e) => {
+    const str = filterChars(e.target.value)
+    setString(str)
+    const parsed = parseFloat(str)
+    if (Number.isFinite(parsed)) {
+      const grams = toGrams(parsed, units)
+      api.gear.patch(gear, { grams })
+    }
+  }
+  const onChangeUnits = (e) => console.log({ onChangeUnits: e.target.value })
+
+  // return <Weight g={gear.grams} type="gear" />
+  return (
+    <div className={styles.WeightEditor}>
+      <input
+        value={'' + string}
+        className={cx(styles.EditableField, styles.weightEditorInput)}
+        onChange={onChange}
+      />
+      <select value={units} onChange={onChangeUnits} tabIndex="-1">
+        <option value="oz">oz</option>
+        <option value="lb">lb</option>
+      </select>
+    </div>
+  )
 }
