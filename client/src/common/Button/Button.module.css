@@ -1,19 +1,19 @@
 .Button {
   position: relative;
   display: inline-block;
-  padding: 9px 15px;
+  padding: 7px 15px;
   border: none;
   border-radius: 999px;
   background: none;
-  font-size: 13px;
+  font-size: 14px;
   text-decoration: none;
   transition: all 200ms, padding 300ms ease-in-out;
   outline: none;
-  line-height: 1.4;
   background: var(--oc-cyan-6);
   color: #fff;
   user-select: none;
   cursor: default;
+  border: 1px solid transparent;
 }
 
 a.Button,
@@ -35,6 +35,32 @@ a.Button:hover {
 .Button:not(:disabled).hover,
 .Button:not(:disabled):hover {
   background: var(--oc-cyan-5);
+}
+
+.Button.active,
+.Button[data-state='open'] {
+  background: var(--oc-cyan-4);
+}
+
+/* OUTLINE button modifier */
+.Button.outline {
+  border: 1px solid currentColor;
+}
+
+/* SUBTLE button style */
+.Button.subtle {
+  background: rgba(255, 255, 255, 0%);
+  color: var(--oc-cyan-7);
+  font-weight: 500;
+}
+
+.Button.subtle:hover {
+  background: var(--oc-cyan-0);
+}
+
+.Button.subtle.active,
+.Button.subtle[data-state='open'] {
+  background: var(--oc-cyan-0);
 }
 
 .Button.loading {

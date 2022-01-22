@@ -25,6 +25,12 @@ const findPackByShareId = async (req, res, next) => {
   next()
 }
 
+app.get('/', requireAuth, async (req, res) => {
+  res.json({
+    packs: await req.user.$relatedQuery('packs'),
+  })
+})
+
 app.get('/:packId', requireAuth, findPack, async (req, res) => {
   res.json({
     pack: await req.pack.$query().withGraphFetched('packSections.gear'),

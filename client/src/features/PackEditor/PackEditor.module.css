@@ -35,3 +35,12 @@
   border-right: 1px solid var(--border-color);
   /*background: linear-gradient(to bottom, var(--oc-blue-0), #fff);*/
 }
+
+.Header {
+  display: flex;
+  justify-content: space-between;
+}
+
+.headerActions {
+  margin-top: 10px;
+}

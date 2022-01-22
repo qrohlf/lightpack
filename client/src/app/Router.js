@@ -4,6 +4,7 @@ import { PackEditor } from 'features/PackEditor'
 import { LoginPage } from 'features/LoginPage'
 import { NotFoundPage } from 'features/NotFoundPage'
 import { LandingPage } from 'features/LandingPage'
+import { PackIndexPage } from 'features/PackIndexPage'
 import { LighterpackImportPage } from 'features/LighterpackImportPage'
 import { useAuthState } from 'hooks/useAuth'
 
@@ -18,6 +19,7 @@ const commonRoutes = [
 
 const loggedInRoutes = (
   <Routes>
+    <Route index element={<PackIndexPage />} />
     <Route path="/packs/:packId" element={<PackEditor />} />
     <Route path="/login" element={<Navigate to="/" />} />
     <Route path="/signup" element={<Navigate to="/" />} />

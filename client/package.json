@@ -14,8 +14,10 @@
     "deploy": "git push dokku master"
   },
   "dependencies": {
+    "@babel/runtime": "^7.16.7",
     "@nivo/core": "^0.79.0",
     "@nivo/pie": "^0.79.1",
+    "@radix-ui/react-popover": "^0.1.4",
     "@testing-library/jest-dom": "^5.16.1",
     "@testing-library/react": "^12.1.2",
     "@testing-library/user-event": "^13.5.0",

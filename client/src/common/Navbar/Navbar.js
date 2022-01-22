@@ -11,13 +11,16 @@ export const Navbar = ({ children }) => {
   } = useAuth()
   return (
     <div className={styles.Navbar}>
-      <div className={styles.logoContainer}>
+      <Link className={styles.logoContainer} to="/">
         <div className={styles.logoImg}>🎒</div>{' '}
         <h1 className={styles.siteTitle}>Lightpack</h1>
-      </div>
-      <div>
-        {/* fixme do the profile dropdown thing */}
-        {currentUser && <Button onClick={logout}>Sign Out</Button>}
+      </Link>
+      <div className={styles.actions}>
+        {currentUser && (
+          <Button subtle onClick={logout}>
+            Sign Out
+          </Button>
+        )}
         {!currentUser && (
           <Link to="/signup" data-appearance="button">
             Sign Up

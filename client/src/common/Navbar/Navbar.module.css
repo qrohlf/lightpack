@@ -12,6 +12,7 @@
 .logoContainer {
   display: flex;
   align-items: center;
+  color: inherit;
 }
 
 .logoContainer h1 {
@@ -23,4 +24,9 @@
 
 .logoImg {
   font-size: 24px;
+}
+
+.actions {
+  display: flex;
+  align-items: center;
 }

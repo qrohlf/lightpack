@@ -9,6 +9,8 @@ import { LayoutFixed } from 'common/LayoutFixed'
 import { colorSchemes } from 'lib/colorSchemes'
 import { useParams } from 'react-router-dom'
 import { useApi } from 'hooks/useApi'
+import { Popover } from 'common/Popover'
+import { LoadablePage } from 'common/LoadablePage'
 
 const colorScheme = colorSchemes.metro
 
@@ -22,33 +24,27 @@ export const PackEditor = ({ children, readonly }) => {
     ? () => api.packs.showPublic({ shareId })
     : () => api.packs.show({ packId })
 
-  const cacheKey = readonly
-    ? queryConstants.PACKS.SHOW_PUBLIC
-    : queryConstants.PACKS.SHOW
+  const cacheKey = queryConstants.PACKS.SHOW
 
   const packQuery = useQuery([cacheKey, packId], getPack)
 
   return (
-    <LayoutFixed>
-      <div className={styles.PackEditor}>
-        <div className={styles.sidePanel}>
-          {packQuery.isSuccess && (
-            <PieChart
-              pack={packQuery.data.pack}
-              colorForIndex={colorForIndex}
-            />
-          )}
-          {packQuery.isSuccess && (
-            <SectionsTable
-              pack={packQuery.data.pack}
-              colorForIndex={colorForIndex}
-            />
-          )}
-        </div>
-        <div className={styles.mainContent}>
-          <div className={styles.contentContainer}>
-            {packQuery.isSuccess && (
-              <>
+    <LoadablePage query={packQuery}>
+      {() => (
+        <LayoutFixed>
+          <div className={styles.PackEditor}>
+            <div className={styles.sidePanel}>
+              <PieChart
+                pack={packQuery.data.pack}
+                colorForIndex={colorForIndex}
+              />
+              <SectionsTable
+                pack={packQuery.data.pack}
+                colorForIndex={colorForIndex}
+              />
+            </div>
+            <div className={styles.mainContent}>
+              <div className={styles.contentContainer}>
                 <Header pack={packQuery.data.pack} />
                 <div className={styles.packContents}>
                   {packQuery.data.pack.packSections.map((s, i) => (
@@ -59,19 +55,32 @@ export const PackEditor = ({ children, readonly }) => {
                     />
                   ))}
                 </div>
-              </>
-            )}
+              </div>
+            </div>
           </div>
-        </div>
-      </div>
-      {/*<pre>{JSON.stringify(packQuery.data, null, '  ')}</pre>*/}
-    </LayoutFixed>
+          {/*<pre>{JSON.stringify(packQuery.data, null, '  ')}</pre>*/}
+        </LayoutFixed>
+      )}
+    </LoadablePage>
   )
 }
 
 const Header = ({ pack }) => (
   <div className={styles.Header}>
     <h1>{pack.name}</h1>
-    <p>Public link: /p/{pack.shareId}</p>
+    <div className={styles.headerActions}>
+      <Popover
+        trigger="Share"
+        buttonProps={{ subtle: true, style: { marginRight: 5 } }}
+      >
+        <p>Public link: /p/{pack.shareId}</p>
+      </Popover>
+      <Popover
+        trigger="Options"
+        buttonProps={{ subtle: true, style: { marginRight: -15 } }}
+      >
+        <p>Color scheme, duplicate, delete, units, etc</p>
+      </Popover>
+    </div>
   </div>
 )

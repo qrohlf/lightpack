@@ -18,6 +18,11 @@ export const useApi = () => {
         headers: authHeader,
         method: 'GET',
       }),
+    patch: (path, body) =>
+      fetchJSON(API_ENDPOINT + path, body, {
+        headers: authHeader,
+        method: 'PATCH',
+      }),
   }
 
   return {
@@ -31,8 +36,12 @@ export const useApi = () => {
         req.post('import/lighterpack', { lighterpackId }),
     },
     packs: {
+      index: () => req.get('/packs'),
       show: ({ packId }) => req.get(`packs/${packId}`),
       showPublic: ({ shareId }) => req.get(`packs/public/${shareId}`),
+    },
+    gear: {
+      update: ({ id, ...rest }) => req.patch(`/gear/${id}`, rest),
     },
   }
 }

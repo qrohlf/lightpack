@@ -30,3 +30,16 @@
 .description {
   color: var(--oc-gray-6);
 }
+
+.EditableField {
+  font-size: inherit;
+  padding: 0 0;
+  border: none;
+  outline: none;
+  border: 1px solid transparent;
+}
+
+.EditableField:hover,
+.EditableField:focus {
+  border: 1px solid var(--oc-gray-3);
+}

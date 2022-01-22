@@ -34,7 +34,7 @@ export default class Pack extends Model {
   async $beforeInsert() {
     if (!this.shareId) {
       // generate a unique shareId
-      this.shareId = randomString(10)
+      this.shareId = randomString(8)
       const hasColission = async () =>
         (await Pack.query().where({ shareId: this.shareId }).count().first())
           .count > 0
