@@ -26,6 +26,8 @@ export const useAuthState = () => useContext(AuthContext)[0]
 export const useAuth = () => {
   const [authState, setAuthState] = useContext(AuthContext)
   const api = useApi()
+
+  // maybe stop using navigate here and hoist this logic back up into the Provider!
   const navigate = useNavigate()
 
   return {

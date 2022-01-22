@@ -17,7 +17,7 @@ export default (lighterpackHtml) => {
   const packSections = sectionNodes.map((node) => {
     const name = node.querySelector('.lpCategoryName').textContent
     const gearNodes = [...node.querySelectorAll('.lpItem')]
-    const gear = gearNodes.map((gearNode) => {
+    const gear = gearNodes.map((gearNode, i) => {
       const name = gearNode.querySelector('.lpName').textContent.trim()
       const description = gearNode
         .querySelector('.lpDescription')
@@ -27,7 +27,7 @@ export default (lighterpackHtml) => {
       const worn = !!gearNode.querySelector('.lpWorn.lpActive')
       const consumable = !!gearNode.querySelector('.lpConsumable.lpActive')
       const qty = parseInt(gearNode.querySelector('.lpQtyCell').textContent, 10)
-      return { name, description, grams, worn, consumable, qty }
+      return { name, description, grams, worn, consumable, qty, rank: i }
     })
     return { name, gear }
   })

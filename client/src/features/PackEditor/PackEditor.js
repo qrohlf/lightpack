@@ -80,7 +80,12 @@ const Header = ({ pack }) => (
         trigger="Share"
         buttonProps={{ subtle: true, style: { marginRight: 5 } }}
       >
-        <p>Public link: /p/{pack.shareId}</p>
+        <p>
+          Public link:{' '}
+          <a href={`/p/${pack.shareId}`} target="_blank" rel="noreferrer">
+            /p/{pack.shareId}
+          </a>
+        </p>
       </Popover>
       <Popover
         trigger="Options"

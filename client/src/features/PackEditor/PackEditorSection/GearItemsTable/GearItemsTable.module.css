@@ -43,6 +43,19 @@
   color: var(--oc-gray-6);
 }
 
+.GearRow .description,
+.GearRow .name,
+.GearRow .weight {
+  transition: color 150ms ease, opacity 150ms ease;
+}
+
+.GearRow[data-qty='0'] .description,
+.GearRow[data-qty='0'] .name,
+.GearRow[data-qty='0'] .weight {
+  opacity: 0.5;
+  color: var(--oc-gray-6);
+}
+
 .EditableField {
   font-size: inherit;
   padding: 0 0;

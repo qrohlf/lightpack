@@ -5,9 +5,10 @@ import { useThrottle } from 'hooks/useThrottle'
 import { useApi } from 'hooks/useApi'
 import { getSectionWeight, getSectionQty } from 'lib/packUtils'
 import { Weight, toOz } from 'common/Weight'
+import _ from 'lodash'
 
 export const GearItemsTable = ({ section }) => {
-  const gear = section.gear
+  const gear = _.sortBy(section.gear, (g) => g.rank)
   return (
     <div className={styles.GearItemsTable}>
       <GearHeader />
@@ -46,14 +47,18 @@ const GearHeader = () => (
   </div>
 )
 
+/*
+TODO - grab handles and delete button
+*/
 const GearRow = ({ gear }) => {
   const api = useApi()
   const toggleModifier = (modifier) =>
     api.gear.patch(gear, { [modifier]: !gear[modifier] })
 
   return (
-    <div className={styles.GearRow}>
+    <div className={styles.GearRow} data-qty={gear.qty}>
       <EditableField
+        className={styles.name}
         value={gear.name}
         persistChange={(name) => api.gear.patch(gear, { name })}
       />

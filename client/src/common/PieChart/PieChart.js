@@ -3,6 +3,7 @@ import styles from './PieChart.module.css'
 import { ResponsivePie } from '@nivo/pie'
 import { getSectionWeight } from 'lib/packUtils'
 import { TooltipWrapper } from '@nivo/tooltip'
+import { Weight } from 'common/Weight'
 
 const Tooltip = ({ datum: { label, value, color } }) => (
   <TooltipWrapper anchor="right" position={[0, 0]}>
@@ -12,7 +13,7 @@ const Tooltip = ({ datum: { label, value, color } }) => (
         {label}
       </div>
       <div className={styles.value}>
-        {value.toLocaleString('en-US', { maximumFractionDigits: 1 })} g
+        <Weight g={value} type="section" />
       </div>
     </div>
   </TooltipWrapper>

@@ -5,9 +5,7 @@ import knex from 'src/lib/knex.js'
 export default class Model extends ObjectionModel {
   // keep timestamps updated
   $beforeUpdate() {
-    if (this.updatedAt) {
-      this.updatedAt = day.utc().toISOString()
-    }
+    this.updatedAt = day.utc().toISOString()
   }
 }
 

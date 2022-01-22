@@ -13,11 +13,12 @@
 
 ### TODO: Polish up the PackEditor
 
-- description display (and fix LP description import)
-- allow the user to change weight display on a per-type basis
-- replace all instances of a weight unit string (e.g. 'oz') with a WeightUnitsSelect
 - implement re-ordering of items
 - implement add item (with tab-to-add support!)
+- edit pack name
+- description display + edit (and fix LP description import)
+- allow the user to change weight display on a per-type basis
+- replace all instances of a weight unit string (e.g. 'oz') with a WeightUnitsSelect
 - implement re-ordering of sections
 - implement add section
 - tooltips (for stuff like worn/consumable/base)
@@ -39,6 +40,7 @@
 
 ### TODO: Final bits
 
+- replace SVG favicon with a PNG or ICO
 - implement read-only share mode
 - implement import page
 - add "colorScheme" to packs table, and add user color editing

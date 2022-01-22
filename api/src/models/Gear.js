@@ -36,6 +36,7 @@ export default class Gear extends Model {
         'qty',
         'updatedAt',
         'worn',
+        'rank',
       ),
     )
 

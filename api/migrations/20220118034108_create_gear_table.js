@@ -15,6 +15,12 @@ export const up = (knex) =>
       .onDelete('CASCADE')
 
     t.string('name', 1024).notNullable().defaultTo('')
+
+    t.string('rank', 255).notNullable().defaultTo('')
+
+    // rank must be unique within sections
+    t.unique(['rank', 'packSectionId'])
+
     t.string('emoji', 1).notNullable().defaultTo('')
     t.text('description').notNullable().defaultTo('')
     t.string('link').notNullable().defaultTo('')

@@ -1,6 +1,8 @@
+import fetch from 'node-fetch'
 import knex from 'src/lib/knex.js'
 import Pack from 'src/models/Pack.js'
 import User from 'src/models/User.js'
+import parseLighterpack from 'src/lib/parseLighterpack.js'
 
 const seedDb = async () => {
   try {
@@ -16,60 +18,23 @@ const seedDb = async () => {
       password: '2ZeWRp6_WbL2ccuEMk',
     })
 
-    await Pack.query().insertGraph({
-      name: 'Spring Fastpacking',
-      userId: user.id,
-      packSections: [
-        {
-          name: 'Pack',
-          gear: [{ name: "Pa'lante Joey", grams: 455 }],
-        },
-        {
-          name: 'Shelter',
-          gear: [
-            {
-              name: 'Tent',
-              description: 'Locus Khufu DCF (incl stuff sack)',
-              grams: 345.8,
-            },
-            {
-              name: 'Pole Extender',
-              description: 'Needed for use with fixed-length trekking poles',
-              grams: 25.5,
-            },
-            {
-              name: 'Stakes',
-              description: '4x Mini Hog, 2x Ti Hook',
-              grams: 53.8,
-            },
-            {
-              name: 'Trekking Pole',
-              description: 'BD Alpine Carbon Z, (single pole, 120cm)',
-            },
-          ],
-        },
-        {
-          name: 'Sleep',
-          gear: [
-            {
-              name: 'Sleeping Bag',
-              description: 'Marmot Phase 20',
-              grams: 630.3,
-            },
-            {
-              name: 'Sleeping Pad',
-              description: 'xlite reg wide with stuff sack',
-              grams: 460.68,
-            },
-            {
-              name: 'Pillowcase',
-              description: 'thermarest discontinued model',
-              grams: 28.3,
-            },
-          ],
-        },
-      ],
-    })
+    const importLP = async (url) => {
+      const lpResponse = await fetch(url).then((r) => r.text())
+      const parsed = parseLighterpack(lpResponse)
+      await Pack.query().insertGraph({
+        userId: user.id,
+        ...parsed,
+      })
+      console.log(`imported ${url}`)
+    }
+
+    try {
+      await importLP('https://lighterpack.com/r/mvrg3d')
+      await importLP('https://lighterpack.com/r/snthnm')
+      await importLP('https://lighterpack.com/r/e87qn6')
+    } catch (e) {
+      console.error(e)
+    }
   } finally {
     knex.destroy()
   }
