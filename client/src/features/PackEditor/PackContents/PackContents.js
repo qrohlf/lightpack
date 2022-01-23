@@ -1,5 +1,5 @@
 import React, { useCallback, useEffect, useRef, useState } from 'react'
-import { createPortal, unstable_batchedUpdates } from 'react-dom'
+import { createPortal } from 'react-dom'
 import {
   closestCenter,
   pointerWithin,
@@ -31,12 +31,6 @@ import { Item } from './components/Item'
 import { getRank } from 'lib/getRank'
 import _ from 'lodash'
 
-const defaultInitializer = (index) => index
-
-function createRange(length, initializer = defaultInitializer) {
-  return [...new Array(length)].map((_, index) => initializer(index))
-}
-
 const animateLayoutChanges = (args) =>
   args.isSorting || args.wasDragging ? defaultAnimateLayoutChanges(args) : true
 
@@ -62,7 +56,7 @@ function DroppableContainer({
     id,
     data: {
       type: 'container',
-      children: items,
+      // children: items,
     },
     animateLayoutChanges,
   })
@@ -136,6 +130,9 @@ export function PackContents({
     ),
   )
 
+  // Next steps
+  // - replace patchPackSection with a proper API call
+  // - heavily refactor while carefully checking for regressions
   const patchPackSection = ({ id }, patch) =>
     setPackSections((packSections) =>
       packSections.map((ps) => (ps.id === id ? { ...ps, ...patch } : ps)),

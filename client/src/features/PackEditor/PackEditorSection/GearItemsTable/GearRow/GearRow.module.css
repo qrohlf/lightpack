@@ -24,14 +24,14 @@
   text-align: right;
 }
 
-.GearItemsTable input[type='number'] {
+.GearRow input[type='number'] {
   -webkit-appearance: textfield;
   -moz-appearance: textfield;
   appearance: textfield;
 }
 
-.GearItemsTable input[type='number']::-webkit-inner-spin-button,
-.GearItemsTable input[type='number']::-webkit-outer-spin-button {
+.GearRow input[type='number']::-webkit-inner-spin-button,
+.GearRow input[type='number']::-webkit-outer-spin-button {
   -webkit-appearance: none;
 }
 

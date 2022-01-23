@@ -16,7 +16,7 @@ export const up = (knex) =>
 
     t.string('name', 1024).notNullable().defaultTo('')
 
-    t.string('rank', 255).notNullable().defaultTo('')
+    t.string('rank', 255).index().notNullable().defaultTo('')
 
     // rank must be unique within sections
     t.unique(['rank', 'packSectionId'])

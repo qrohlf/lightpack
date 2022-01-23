@@ -14,7 +14,7 @@ export const up = (knex) =>
       .inTable('packs')
       .onDelete('CASCADE')
 
-    t.string('rank', 255).notNullable().defaultTo('')
+    t.string('rank', 255).index().notNullable().defaultTo('')
 
     // rank must be unique within packs
     t.unique(['rank', 'packId'])

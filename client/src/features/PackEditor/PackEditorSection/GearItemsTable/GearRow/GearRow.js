@@ -33,16 +33,6 @@ export const GearHeader = () => (
   </div>
 )
 
-/*
-TODO - grab handles and delete button
-
-There's a kind of confusing example on how to do this here: https://codesandbox.io/s/github/react-dnd/react-dnd/tree/gh-pages/examples_hooks_js/04-sortable/cancel-on-drop-outside?from-embed=&file=/src/Card.jsx
-
-hmm, https://dndkit.com/ looks nice.
-
-The example you want using dndkit would be this one:
-https://5fc05e08a4a65d0021ae0bf2-goamnjvxea.chromatic.com/?path=/story/presets-sortable-multiple-containers--vertical
-*/
 export const GearRow = React.forwardRef(({ gear, ...props }, ref) => {
   const api = useApi()
   const toggleModifier = (modifier) =>
@@ -51,7 +41,6 @@ export const GearRow = React.forwardRef(({ gear, ...props }, ref) => {
   return (
     <div {...props} ref={ref} className={styles.GearRow} data-qty={gear.qty}>
       <div>
-        <span style={{ cursor: 'grab' }}>foo</span>{' '}
         <EditableField
           className={styles.name}
           value={gear.name}
