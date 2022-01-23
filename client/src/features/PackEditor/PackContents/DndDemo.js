@@ -101,11 +101,11 @@ const dropAnimation = {
   easing: 'cubic-bezier(0.18, 0.67, 0.6, 1.22)',
 }
 
-const TRASH_ID = 'void'
+export const TRASH_ID = 'void'
 const PLACEHOLDER_ID = 'placeholder'
 const empty = []
 
-export function PackContents({
+export function DndDemo({
   adjustScale = false,
   itemCount = 3,
   cancelDrop,
@@ -125,16 +125,14 @@ export function PackContents({
   pack,
 }) {
   const vertical = true
-  const [packSections, setPackSections] = useState(pack.packSections)
-
-  const [items, setItems] = useState(() =>
-    pack.packSections.reduce(
-      (obj, ps) => ({
-        ...obj,
-        [ps.id]: ps.gear.map((g) => g.name),
-      }),
-      {},
-    ),
+  const [items, setItems] = useState(
+    () =>
+      initialItems ?? {
+        A: createRange(itemCount, (index) => `A${index + 1}`),
+        B: createRange(itemCount, (index) => `B${index + 1}`),
+        C: createRange(itemCount, (index) => `C${index + 1}`),
+        D: createRange(itemCount, (index) => `D${index + 1}`),
+      },
   )
   // const sections = pack.packSections
   // const itemsAlt = sections.reduce(
@@ -149,19 +147,7 @@ export function PackContents({
   //   console.log('setItems called!')
   // }
 
-  // stupid string casting has to happen here because of how object keys
-  // are always strings
-  const containers = packSections.map((ps) => '' + ps.id)
-
-  const reorderPackSection = ({ activeId, targetId }) => {
-    setPackSections((packSections) => {
-      const activeIndex = packSections.findIndex((ps) => ps.id === +activeId)
-      const overIndex = packSections.findIndex((ps) => ps.id === +targetId)
-      console.log({ activeIndex, overIndex })
-      return arrayMove(packSections, activeIndex, overIndex)
-    })
-  }
-
+  const [containers, setContainers] = useState(Object.keys(items))
   const [activeId, setActiveId] = useState(null)
   const lastOverId = useRef(null)
   const recentlyMovedToNewContainer = useRef(false)
@@ -355,12 +341,12 @@ export function PackContents({
       }}
       onDragEnd={({ active, over }) => {
         if (active.id in items && over?.id) {
-          reorderPackSection({ activeId: active.id, targetId: over.id })
-          // setContainers((containers) => {
-          //   const activeIndex = containers.indexOf(active.id)
-          //   const overIndex = containers.indexOf(over.id)
-          //   return arrayMove(containers, activeIndex, overIndex)
-          // })
+          setContainers((containers) => {
+            const activeIndex = containers.indexOf(active.id)
+            const overIndex = containers.indexOf(over.id)
+
+            return arrayMove(containers, activeIndex, overIndex)
+          })
         }
 
         const activeContainer = findContainer(active.id)
@@ -385,6 +371,23 @@ export function PackContents({
             ),
           }))
           setActiveId(null)
+          return
+        }
+
+        if (overId === PLACEHOLDER_ID) {
+          const newContainerId = getNextContainerId()
+
+          unstable_batchedUpdates(() => {
+            setContainers((containers) => [...containers, newContainerId])
+            setItems((items) => ({
+              ...items,
+              [activeContainer]: items[activeContainer].filter(
+                (id) => id !== activeId,
+              ),
+              [newContainerId]: [active.id],
+            }))
+            setActiveId(null)
+          })
           return
         }
 
@@ -432,20 +435,20 @@ export function PackContents({
               : horizontalListSortingStrategy
           }
         >
-          {packSections.map((ps) => (
+          {containers.map((containerId) => (
             <DroppableContainer
-              key={ps.id}
-              id={'' + ps.id}
-              label={ps.name}
+              key={containerId}
+              id={containerId}
+              label={minimal ? undefined : `Column ${containerId}`}
               columns={columns}
-              items={items[ps.id]}
+              items={items[containerId]}
               scrollable={scrollable}
               style={containerStyle}
               unstyled={minimal}
-              onRemove={() => handleRemove(ps)}
+              onRemove={() => handleRemove(containerId)}
             >
-              <SortableContext items={items[ps.id]} strategy={strategy}>
-                {items[ps.id].map((value, index) => {
+              <SortableContext items={items[containerId]} strategy={strategy}>
+                {items[containerId].map((value, index) => {
                   return (
                     <SortableItem
                       disabled={isSortingContainer}
@@ -456,7 +459,7 @@ export function PackContents({
                       style={getItemStyles}
                       wrapperStyle={wrapperStyle}
                       renderItem={renderItem}
-                      containerId={ps.id + ''}
+                      containerId={containerId}
                       getIndex={getIndex}
                     />
                   )
@@ -464,6 +467,17 @@ export function PackContents({
               </SortableContext>
             </DroppableContainer>
           ))}
+          {minimal ? undefined : (
+            <DroppableContainer
+              id={PLACEHOLDER_ID}
+              disabled={isSortingContainer}
+              items={empty}
+              onClick={handleAddColumn}
+              placeholder
+            >
+              + Add column
+            </DroppableContainer>
+          )}
         </SortableContext>
       </div>
       {createPortal(
@@ -504,10 +518,10 @@ export function PackContents({
     )
   }
 
-  function renderContainerDragOverlay(packSectionId) {
+  function renderContainerDragOverlay(containerId) {
     return (
       <Container
-        label={packSections.find((ps) => ps.id === +packSectionId).name}
+        label={`Column ${containerId}`}
         columns={columns}
         style={{
           height: '100%',
@@ -515,13 +529,13 @@ export function PackContents({
         shadow
         unstyled={false}
       >
-        {items[packSectionId].map((item, index) => (
+        {items[containerId].map((item, index) => (
           <Item
             key={item}
             value={item}
             handle={handle}
             style={getItemStyles({
-              packSectionId,
+              containerId,
               overIndex: -1,
               index: getIndex(item),
               value: item,
@@ -538,7 +552,28 @@ export function PackContents({
     )
   }
 
-  function handleRemove(containerID) {}
+  function handleRemove(containerID) {
+    setContainers((containers) => containers.filter((id) => id !== containerID))
+  }
+
+  function handleAddColumn() {
+    const newContainerId = getNextContainerId()
+
+    unstable_batchedUpdates(() => {
+      setContainers((containers) => [...containers, newContainerId])
+      setItems((items) => ({
+        ...items,
+        [newContainerId]: [],
+      }))
+    })
+  }
+
+  function getNextContainerId() {
+    const containerIds = Object.keys(items)
+    const lastContainerId = containerIds[containerIds.length - 1]
+
+    return String.fromCharCode(lastContainerId.charCodeAt(0) + 1)
+  }
 }
 
 function getColor(id) {
