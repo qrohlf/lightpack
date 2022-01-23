@@ -1,0 +1,137 @@
+.GearHeader,
+.GearRow,
+.GearFooter {
+  display: grid;
+  grid-template-columns: 2fr 3fr auto auto 30px;
+  gap: 16px;
+  line-height: 22px;
+}
+
+.GearHeader {
+  font-weight: 600;
+  text-transform: uppercase;
+  font-size: 11px;
+  border-bottom: 1px solid var(--border-color);
+  margin-bottom: 2px;
+}
+
+.GearRow {
+  font-size: 14px;
+}
+
+.weight,
+.qty {
+  text-align: right;
+}
+
+.GearItemsTable input[type='number'] {
+  -webkit-appearance: textfield;
+  -moz-appearance: textfield;
+  appearance: textfield;
+}
+
+.GearItemsTable input[type='number']::-webkit-inner-spin-button,
+.GearItemsTable input[type='number']::-webkit-outer-spin-button {
+  -webkit-appearance: none;
+}
+
+.description {
+  color: var(--oc-gray-6);
+}
+
+.GearRow .description,
+.GearRow .name,
+.GearRow .weight {
+  transition: color 150ms ease, opacity 150ms ease;
+}
+
+.GearRow[data-qty='0'] .description,
+.GearRow[data-qty='0'] .name,
+.GearRow[data-qty='0'] .weight {
+  opacity: 0.5;
+  color: var(--oc-gray-6);
+}
+
+.EditableField {
+  font-size: inherit;
+  padding: 0 0;
+  border: none;
+  outline: none;
+  border: 1px solid transparent;
+}
+
+.EditableField:hover,
+.EditableField:focus {
+  border: 1px solid var(--oc-gray-3);
+}
+
+.modifierEmoji {
+  cursor: default;
+  opacity: 0;
+  font-size: 18px;
+  margin-left: 8px;
+  transition: opacity 150ms ease;
+}
+
+.GearRow:hover .modifierEmoji {
+  opacity: 0.35;
+}
+
+.GearRow:hover .modifierEmoji:hover {
+  opacity: 0.6;
+}
+
+.GearRow:hover .modifierEmoji[data-active='true'],
+.modifierEmoji[data-active='true'] {
+  opacity: 1;
+}
+
+.WeightEditor {
+  text-align: right;
+}
+
+.weightEditorInput {
+  width: 50px;
+  text-align: right;
+}
+
+.WeightEditor select {
+  font-size: inherit;
+  padding: 0 0;
+  border: none;
+  outline: none;
+  border: 1px solid transparent;
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  width: 20px;
+  text-align: right;
+}
+
+.WeightEditor select:hover,
+.WeightEditor select:active,
+.WeightEditor select:focus {
+  border: 1px solid var(--oc-gray-3);
+}
+
+/* footer styles */
+.GearFooter {
+  font-weight: 500;
+  /* margin-top should match SectionsTable  */
+  margin-top: 8px;
+  position: relative;
+}
+
+.GearFooter:before {
+  display: block;
+  content: '';
+  position: absolute;
+  right: 0;
+  top: -4px;
+  height: 0;
+  width: 106px;
+  border-bottom: 1px solid var(--oc-gray-3);
+}
+
+.totalLabel {
+  text-align: right;
+}

@@ -13,7 +13,7 @@
 
 ### TODO: Polish up the PackEditor
 
-- implement re-ordering of items
+- implement re-ordering of items (https://5fc05e08a4a65d0021ae0bf2-goamnjvxea.chromatic.com/?path=/story/presets-sortable-multiple-containers--vertical)
 - implement add item (with tab-to-add support!)
 - edit pack name
 - description display + edit (and fix LP description import)
@@ -25,6 +25,7 @@
 
 ### TODO: Polish up the UI
 
+- pull in Inter as a fallback font: https://fonts.google.com/specimen/Inter
 - port the Popover/PopoverMenu over from Trailhead.club
 - implment list select dropdown in navbar (model it after Scout Maps' map dropdown)
 - implement account dropdown (again, scoutmaps style)

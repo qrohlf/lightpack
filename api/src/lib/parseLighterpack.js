@@ -1,4 +1,5 @@
 import { JSDOM } from 'jsdom'
+import rankArray from 'src/lib/rankArray.js'
 
 export default (lighterpackHtml) => {
   const dom = new JSDOM(lighterpackHtml)
@@ -17,7 +18,7 @@ export default (lighterpackHtml) => {
   const packSections = sectionNodes.map((node) => {
     const name = node.querySelector('.lpCategoryName').textContent
     const gearNodes = [...node.querySelectorAll('.lpItem')]
-    const gear = gearNodes.map((gearNode, i) => {
+    const gear = gearNodes.map((gearNode) => {
       const name = gearNode.querySelector('.lpName').textContent.trim()
       const description = gearNode
         .querySelector('.lpDescription')
@@ -27,8 +28,12 @@ export default (lighterpackHtml) => {
       const worn = !!gearNode.querySelector('.lpWorn.lpActive')
       const consumable = !!gearNode.querySelector('.lpConsumable.lpActive')
       const qty = parseInt(gearNode.querySelector('.lpQtyCell').textContent, 10)
-      return { name, description, grams, worn, consumable, qty, rank: i }
+      return { name, description, grams, worn, consumable, qty }
     })
+
+    // inject rank into gear
+    const ranks = rankArray(gear)
+    gear.forEach((_, i) => (gear[i].rank = ranks[i]))
     return { name, gear }
   })
 

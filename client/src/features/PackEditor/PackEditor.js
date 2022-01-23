@@ -65,7 +65,6 @@ export const PackEditor = ({ children, readonly }) => {
               </div>
             </div>
           </div>
-          {/*<pre>{JSON.stringify(packQuery.data, null, '  ')}</pre>*/}
         </LayoutFixed>
       )}
     </LoadablePage>
