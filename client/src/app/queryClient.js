@@ -48,4 +48,24 @@ export const updateCache = {
       }),
     )
   },
+  patchPackSection: (packSection, patch) => {
+    console.log({ packSection })
+    queryClient.setQueryData(
+      [queryConstants.PACKS.SHOW, packSection.packId],
+      (old) =>
+        produce(old, (draft) => {
+          // figure out where our section lives
+          const packSectionIndex = draft.pack.packSections.findIndex(
+            (ps) => ps.id === packSection.id,
+          )
+
+          console.log({ packSectionIndex, patch })
+
+          // do the optimistic partial update
+          for (const [k, v] of Object.entries(patch)) {
+            draft.pack.packSections[packSectionIndex][k] = v
+          }
+        }),
+    )
+  },
 }

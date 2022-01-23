@@ -29,6 +29,7 @@ import { CSS } from '@dnd-kit/utilities'
 import { Container } from './components/Container'
 import { Item } from './components/Item'
 import { getRank } from 'lib/getRank'
+import { useApi } from 'hooks/useApi'
 import _ from 'lodash'
 
 const animateLayoutChanges = (args) =>
@@ -116,9 +117,18 @@ export function PackContents({
   scrollable,
   pack,
 }) {
+  const api = useApi()
   const vertical = true
-  const [_packSections, setPackSections] = useState(pack.packSections)
-  const packSections = _.sortBy(_packSections, (ps) => ps.rank)
+
+  // TODO: nuke the mask here when the packQuery reloads!
+  const [sectionRankMappingMask, setSectionRankMappingMask] = useState({})
+
+  const sectionsWithRankInjected = pack.packSections.map((ps) => ({
+    ...ps,
+    rank: sectionRankMappingMask[ps.id] || ps.rank,
+  }))
+
+  const packSections = _.sortBy(sectionsWithRankInjected, (ps) => ps.rank)
 
   const [items, setItems] = useState(() =>
     pack.packSections.reduce(
@@ -133,10 +143,10 @@ export function PackContents({
   // Next steps
   // - replace patchPackSection with a proper API call
   // - heavily refactor while carefully checking for regressions
-  const patchPackSection = ({ id }, patch) =>
-    setPackSections((packSections) =>
-      packSections.map((ps) => (ps.id === id ? { ...ps, ...patch } : ps)),
-    )
+  // const patchPackSection = ({ id }, patch) =>
+  //   setPackSections((packSections) =>
+  //     packSections.map((ps) => (ps.id === id ? { ...ps, ...patch } : ps)),
+  //   )
   // const sections = pack.packSections
   // const itemsAlt = sections.reduce(
   //   (obj, s) => ({
@@ -153,10 +163,11 @@ export function PackContents({
   // stupid string casting has to happen here because of how object keys
   // are always strings
   const containers = packSections.map((ps) => '' + ps.id)
-  useEffect(() => console.log(packSections.map((ps) => ps.name)))
+  // useEffect(() => console.log(packSections.map((ps) => ps.name)))
 
   const reorderPackSection = ({ activeId, targetId }) => {
     const activeIndex = packSections.findIndex((ps) => ps.id === +activeId)
+    const activeSection = packSections[activeIndex]
     const overIndex = packSections.findIndex((ps) => ps.id === +targetId)
     const newOrder = arrayMove(packSections, activeIndex, overIndex)
 
@@ -164,7 +175,19 @@ export function PackContents({
     const rankAfter = newOrder[overIndex + 1]?.rank
     const newRank = getRank(rankBefore, rankAfter)
     console.log({ moveTo: overIndex, rankBefore, newRank, rankAfter })
-    patchPackSection({ id: +activeId }, { rank: newRank })
+
+    // this works but it's not _quite_ fast enough to keep up with
+    // the sortable code. There's some extra event loop stuff going on which
+    // causes UI jank.
+    //
+    // we'll probably need to keep our own {id: rank} mappings for packSections
+    // and gear in the state here, and rebuild the mapping whenever we get
+    // authoritative data from the server
+    setSectionRankMappingMask((mask) => ({
+      ...mask,
+      [activeSection.id]: newRank,
+    }))
+    api.packSections.patch(activeSection, { rank: newRank })
   }
 
   const [activeId, setActiveId] = useState(null)

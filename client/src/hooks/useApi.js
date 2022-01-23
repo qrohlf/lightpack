@@ -41,16 +41,33 @@ export const useApi = () => {
       show: ({ id }) => req.get(`packs/${id}`),
       showPublic: ({ shareId }) => req.get(`packs/public/${shareId}`),
     },
+    packSections: {
+      patch: (packSection, patch) => {
+        // do the optimistic update - the problem here is that it's not
+        // *quite* synchronous, which is enough to cause UI jank,
+        // unfortunately
+        updateCache.patchPackSection(packSection, patch)
+
+        return req
+          .patch(`packSections/${packSection.id}`, patch)
+          .then(({ packSection: newPackSection }) => {
+            // this one is a little funky - do another cache update but make sure not to replace the
+            // gear?
+          })
+      },
+    },
     gear: {
       patch: (gear, patch) => {
         // do the optimistic update
         updateCache.patchGear(gear, patch)
 
-        req.patch(`/gear/${gear.id}`, patch).then(({ gear: newGear }) => {
-          // do another cache update now that we have authoritative data from
-          // the server
-          updateCache.replaceGear(newGear)
-        })
+        return req
+          .patch(`/gear/${gear.id}`, patch)
+          .then(({ gear: newGear }) => {
+            // do another cache update now that we have authoritative data from
+            // the server
+            updateCache.replaceGear(newGear)
+          })
       },
     },
   }
