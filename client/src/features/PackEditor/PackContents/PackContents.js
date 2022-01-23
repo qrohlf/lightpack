@@ -28,6 +28,8 @@ import { CSS } from '@dnd-kit/utilities'
 
 import { Container } from './components/Container'
 import { Item } from './components/Item'
+import { getRank } from 'lib/getRank'
+import _ from 'lodash'
 
 const defaultInitializer = (index) => index
 
@@ -121,7 +123,8 @@ export function PackContents({
   pack,
 }) {
   const vertical = true
-  const [packSections, setPackSections] = useState(pack.packSections)
+  const [_packSections, setPackSections] = useState(pack.packSections)
+  const packSections = _.sortBy(_packSections, (ps) => ps.rank)
 
   const [items, setItems] = useState(() =>
     pack.packSections.reduce(
@@ -132,6 +135,11 @@ export function PackContents({
       {},
     ),
   )
+
+  const patchPackSection = ({ id }, patch) =>
+    setPackSections((packSections) =>
+      packSections.map((ps) => (ps.id === id ? { ...ps, ...patch } : ps)),
+    )
   // const sections = pack.packSections
   // const itemsAlt = sections.reduce(
   //   (obj, s) => ({
@@ -148,14 +156,18 @@ export function PackContents({
   // stupid string casting has to happen here because of how object keys
   // are always strings
   const containers = packSections.map((ps) => '' + ps.id)
+  useEffect(() => console.log(packSections.map((ps) => ps.name)))
 
   const reorderPackSection = ({ activeId, targetId }) => {
-    setPackSections((packSections) => {
-      const activeIndex = packSections.findIndex((ps) => ps.id === +activeId)
-      const overIndex = packSections.findIndex((ps) => ps.id === +targetId)
-      console.log({ activeIndex, overIndex })
-      return arrayMove(packSections, activeIndex, overIndex)
-    })
+    const activeIndex = packSections.findIndex((ps) => ps.id === +activeId)
+    const overIndex = packSections.findIndex((ps) => ps.id === +targetId)
+    const newOrder = arrayMove(packSections, activeIndex, overIndex)
+
+    const rankBefore = newOrder[overIndex - 1]?.rank
+    const rankAfter = newOrder[overIndex + 1]?.rank
+    const newRank = getRank(rankBefore, rankAfter)
+    console.log({ moveTo: overIndex, rankBefore, newRank, rankAfter })
+    patchPackSection({ id: +activeId }, { rank: newRank })
   }
 
   const [activeId, setActiveId] = useState(null)
@@ -347,7 +359,9 @@ export function PackContents({
       }}
       onDragEnd={({ active, over }) => {
         if (active.id in items && over?.id) {
-          reorderPackSection({ activeId: active.id, targetId: over.id })
+          if (activeId !== over?.id) {
+            reorderPackSection({ activeId: active.id, targetId: over.id })
+          }
           // setContainers((containers) => {
           //   const activeIndex = containers.indexOf(active.id)
           //   const overIndex = containers.indexOf(over.id)
@@ -417,7 +431,7 @@ export function PackContents({
             <DroppableContainer
               key={ps.id}
               id={'' + ps.id}
-              label={ps.name}
+              label={ps.name + ' - ' + ps.rank}
               columns={columns}
               items={items[ps.id]}
               scrollable={scrollable}

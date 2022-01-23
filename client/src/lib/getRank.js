@@ -1,6 +1,8 @@
 // somewhat bonkers lexical rank implementation from stackoverflow:
 // https://stackoverflow.com/questions/38923376/return-a-new-string-that-sorts-between-two-given-strings/38927158#38927158
-export const getRank = (prev, next) => {
+export const getRank = (_prev, _next) => {
+  const prev = _prev || ''
+  const next = _next || ''
   var p, n, pos, str
   for (pos = 0; p === n; pos++) {
     // find leftmost non-matching character

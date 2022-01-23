@@ -32,10 +32,13 @@ export default (lighterpackHtml) => {
     })
 
     // inject rank into gear
-    const ranks = rankArray(gear)
-    gear.forEach((_, i) => (gear[i].rank = ranks[i]))
+    const gearRanks = rankArray(gear)
+    gear.forEach((_, i) => (gear[i].rank = gearRanks[i]))
     return { name, gear }
   })
+
+  const packSectionRanks = rankArray(packSections)
+  packSections.forEach((_, i) => (packSections[i].rank = packSectionRanks[i]))
 
   return { name, description, packSections }
 }
