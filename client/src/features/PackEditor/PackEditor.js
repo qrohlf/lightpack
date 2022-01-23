@@ -11,6 +11,7 @@ import { useParams } from 'react-router-dom'
 import { useApi } from 'hooks/useApi'
 import { Popover } from 'common/Popover'
 import { LoadablePage } from 'common/LoadablePage'
+import { PackContents } from './PackContents'
 
 const colorScheme = colorSchemes.metro
 
@@ -54,13 +55,15 @@ export const PackEditor = ({ children, readonly }) => {
               <div className={styles.contentContainer}>
                 <Header pack={packQuery.data.pack} />
                 <div className={styles.packContents}>
-                  {packQuery.data.pack.packSections.map((s, i) => (
-                    <PackEditorSection
-                      key={s.id}
-                      section={s}
-                      color={colorForIndex(i)}
-                    />
-                  ))}
+                  <PackContents pack={packQuery.data.pack} />
+                  {false &&
+                    packQuery.data.pack.packSections.map((s, i) => (
+                      <PackEditorSection
+                        key={s.id}
+                        section={s}
+                        color={colorForIndex(i)}
+                      />
+                    ))}
                 </div>
               </div>
             </div>
