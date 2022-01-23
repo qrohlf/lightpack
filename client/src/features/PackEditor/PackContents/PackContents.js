@@ -101,10 +101,6 @@ const dropAnimation = {
   easing: 'cubic-bezier(0.18, 0.67, 0.6, 1.22)',
 }
 
-const TRASH_ID = 'void'
-const PLACEHOLDER_ID = 'placeholder'
-const empty = []
-
 export function PackContents({
   adjustScale = false,
   itemCount = 3,
@@ -196,12 +192,6 @@ export function PackContents({
       let overId = getFirstCollision(intersections, 'id')
 
       if (overId != null) {
-        if (overId === TRASH_ID) {
-          // If the intersecting droppable is the trash, return early
-          // Remove this if you're not using trashable functionality in your app
-          return intersections
-        }
-
         if (overId in items) {
           const containerItems = items[overId]
 
@@ -299,7 +289,9 @@ export function PackContents({
       onDragOver={({ active, over }) => {
         const overId = over?.id
 
-        if (!overId || overId === TRASH_ID || active.id in items) {
+        if (active.id in items) {
+          // if we're dragging a packSection, return early and don't
+          // commit drag actions in onDragOver
           return
         }
 
@@ -377,17 +369,6 @@ export function PackContents({
           return
         }
 
-        if (overId === TRASH_ID) {
-          setItems((items) => ({
-            ...items,
-            [activeContainer]: items[activeContainer].filter(
-              (id) => id !== activeId,
-            ),
-          }))
-          setActiveId(null)
-          return
-        }
-
         const overContainer = findContainer(overId)
 
         if (overContainer) {
@@ -425,7 +406,7 @@ export function PackContents({
         }}
       >
         <SortableContext
-          items={[...containers, PLACEHOLDER_ID]}
+          items={containers}
           strategy={
             vertical
               ? verticalListSortingStrategy
@@ -476,9 +457,6 @@ export function PackContents({
         </DragOverlay>,
         document.body,
       )}
-      {trashable && activeId && !containers.includes(activeId) ? (
-        <Trash id={TRASH_ID} />
-      ) : null}
     </DndContext>
   )
 
