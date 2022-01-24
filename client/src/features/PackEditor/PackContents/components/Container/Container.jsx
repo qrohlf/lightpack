@@ -11,24 +11,18 @@ export const Container = forwardRef(
       children,
       columns = 1,
       handleProps,
-      horizontal,
       hover,
       onClick,
       onRemove,
       label,
-      placeholder,
       style,
-      scrollable,
       shadow,
-      unstyled,
       ...props
     },
     ref,
   ) => {
-    const Component = onClick ? 'button' : 'div'
-
     return (
-      <Component
+      <div
         {...props}
         ref={ref}
         style={{
@@ -37,12 +31,8 @@ export const Container = forwardRef(
         }}
         className={classNames(
           styles.Container,
-          unstyled && styles.unstyled,
-          horizontal && styles.horizontal,
-          hover && styles.hover,
-          placeholder && styles.placeholder,
-          scrollable && styles.scrollable,
-          shadow && styles.shadow,
+          hover && styles.hover, // used to indicate this section is the  current drop target
+          shadow && styles.shadow, // used by the drag overlay to convey height
         )}
         onClick={onClick}
         tabIndex={onClick ? 0 : undefined}
@@ -56,8 +46,8 @@ export const Container = forwardRef(
             </div>
           </div>
         ) : null}
-        {placeholder ? children : <ul>{children}</ul>}
-      </Component>
+        <ul>{children}</ul>
+      </div>
     )
   },
 )

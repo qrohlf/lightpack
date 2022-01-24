@@ -40,13 +40,11 @@ export const GearRow = React.forwardRef(({ gear, ...props }, ref) => {
 
   return (
     <div {...props} ref={ref} className={styles.GearRow} data-qty={gear.qty}>
-      <div>
-        <EditableField
-          className={styles.name}
-          value={gear.name}
-          persistChange={(name) => api.gear.patch(gear, { name })}
-        />
-      </div>
+      <EditableField
+        className={styles.name}
+        value={gear.name}
+        persistChange={(name) => api.gear.patch(gear, { name })}
+      />
       <EditableField
         className={styles.description}
         value={gear.description}

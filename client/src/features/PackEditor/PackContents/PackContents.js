@@ -7,10 +7,8 @@ import {
   DndContext,
   DragOverlay,
   getFirstCollision,
-  KeyboardSensor,
   MouseSensor,
   TouchSensor,
-  useDroppable,
   useSensors,
   useSensor,
   MeasuringStrategy,
@@ -20,9 +18,7 @@ import {
   useSortable,
   arrayMove,
   defaultAnimateLayoutChanges,
-  sortableKeyboardCoordinates,
   verticalListSortingStrategy,
-  horizontalListSortingStrategy,
 } from '@dnd-kit/sortable'
 import { CSS } from '@dnd-kit/utilities'
 
@@ -61,10 +57,14 @@ function DroppableContainer({
     },
     animateLayoutChanges,
   })
-  const isOverContainer = over
-    ? (id === over.id && active?.data.current?.type !== 'container') ||
-      items.includes(over.id)
-    : false
+
+  const userIsDraggingItemOverThisSection =
+    id === over?.id && active?.data?.current?.type !== 'container'
+  const userIsDraggingItemOverAChildOfThisSection = items.includes(over?.id)
+
+  const isOverContainer =
+    userIsDraggingItemOverThisSection ||
+    userIsDraggingItemOverAChildOfThisSection
 
   return (
     <Container
@@ -88,11 +88,6 @@ function DroppableContainer({
   )
 }
 
-// const dropAnimation = {
-//   ...defaultDropAnimation,
-//   dragSourceOpacity: 0.5,
-// }
-
 const dropAnimation = {
   duration: 300,
   easing: 'cubic-bezier(0.18, 0.67, 0.6, 1.22)',
@@ -103,13 +98,11 @@ export function PackContents({
   itemCount = 3,
   cancelDrop,
   columns,
-  handle = false,
+  handle = true,
   items: initialItems,
   containerStyle,
-  coordinateGetter = sortableKeyboardCoordinates,
   getItemStyles = () => ({}),
   wrapperStyle = () => ({}),
-  minimal = false,
   modifiers,
   renderItem,
   strategy = verticalListSortingStrategy,
@@ -260,13 +253,7 @@ export function PackContents({
     [activeId, items],
   )
   const [clonedItems, setClonedItems] = useState(null)
-  const sensors = useSensors(
-    useSensor(MouseSensor),
-    useSensor(TouchSensor),
-    useSensor(KeyboardSensor, {
-      coordinateGetter,
-    }),
-  )
+  const sensors = useSensors(useSensor(MouseSensor), useSensor(TouchSensor))
   const findContainer = (id) => {
     if (id in items) {
       return id
@@ -433,19 +420,15 @@ export function PackContents({
     >
       <div
         style={{
-          display: 'inline-grid',
+          display: 'grid',
           boxSizing: 'border-box',
-          padding: 20,
+          gap: 16,
           gridAutoFlow: vertical ? 'row' : 'column',
         }}
       >
         <SortableContext
           items={containers}
-          strategy={
-            vertical
-              ? verticalListSortingStrategy
-              : horizontalListSortingStrategy
-          }
+          strategy={verticalListSortingStrategy}
         >
           {packSections.map((ps) => (
             <DroppableContainer
@@ -456,7 +439,6 @@ export function PackContents({
               items={items[ps.id]}
               scrollable={scrollable}
               style={containerStyle}
-              unstyled={minimal}
               onRemove={() => handleRemove(ps)}
             >
               <SortableContext items={items[ps.id]} strategy={strategy}>
@@ -566,34 +548,6 @@ function getColor(id) {
   }
 
   return undefined
-}
-
-function Trash({ id }) {
-  const { setNodeRef, isOver } = useDroppable({
-    id,
-  })
-
-  return (
-    <div
-      ref={setNodeRef}
-      style={{
-        display: 'flex',
-        alignItems: 'center',
-        justifyContent: 'center',
-        position: 'fixed',
-        left: '50%',
-        marginLeft: -150,
-        bottom: 20,
-        width: 300,
-        height: 60,
-        borderRadius: 5,
-        border: '1px solid',
-        borderColor: isOver ? 'red' : '#DDD',
-      }}
-    >
-      Drop here to delete
-    </div>
-  )
 }
 
 function SortableItem({
