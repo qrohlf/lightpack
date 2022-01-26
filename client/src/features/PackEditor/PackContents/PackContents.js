@@ -20,6 +20,7 @@ import {
   defaultAnimateLayoutChanges,
   verticalListSortingStrategy,
 } from '@dnd-kit/sortable'
+import produce from 'immer'
 import { CSS } from '@dnd-kit/utilities'
 
 import { Container } from './components/Container'
@@ -27,66 +28,6 @@ import { Item } from './components/Item'
 import { getRank } from 'lib/getRank'
 import { useApi } from 'hooks/useApi'
 import _ from 'lodash'
-
-const animateLayoutChanges = (args) =>
-  args.isSorting || args.wasDragging ? defaultAnimateLayoutChanges(args) : true
-
-function DroppableContainer({
-  children,
-  columns = 1,
-  disabled,
-  id,
-  items,
-  style,
-  ...props
-}) {
-  const {
-    active,
-    attributes,
-    isDragging,
-    listeners,
-    over,
-    setNodeRef,
-    transition,
-    transform,
-  } = useSortable({
-    id,
-    data: {
-      type: 'container',
-      // children: items,
-    },
-    animateLayoutChanges,
-  })
-
-  const userIsDraggingItemOverThisSection =
-    id === over?.id && active?.data?.current?.type !== 'container'
-  const userIsDraggingItemOverAChildOfThisSection = items.includes(over?.id)
-
-  const isOverContainer =
-    userIsDraggingItemOverThisSection ||
-    userIsDraggingItemOverAChildOfThisSection
-
-  return (
-    <Container
-      ref={disabled ? undefined : setNodeRef}
-      style={{
-        ...style,
-        transition,
-        transform: CSS.Translate.toString(transform),
-        opacity: isDragging ? 0.5 : undefined,
-      }}
-      hover={isOverContainer}
-      handleProps={{
-        ...attributes,
-        ...listeners,
-      }}
-      columns={columns}
-      {...props}
-    >
-      {children}
-    </Container>
-  )
-}
 
 const dropAnimation = {
   duration: 300,
@@ -111,17 +52,25 @@ export function PackContents({
   pack,
 }) {
   const api = useApi()
-  const vertical = true
-
   // TODO: nuke the mask here when the packQuery reloads!
   const [sectionRankMappingMask, setSectionRankMappingMask] = useState({})
-
   const sectionsWithRankInjected = pack.packSections.map((ps) => ({
     ...ps,
     rank: sectionRankMappingMask[ps.id] || ps.rank,
   }))
 
-  const packSections = _.sortBy(sectionsWithRankInjected, (ps) => ps.rank)
+  const serverPackSections = _.sortBy(sectionsWithRankInjected, (ps) => ps.rank)
+
+  // okay, so here's the rub: in order to properly render the draggable
+  // interface, we're going to have to be able to move gear items in between
+  // pack sections without serializing that state change back to the server.
+  //
+  // basically, when a drag interaction starts, we want to switch to using
+  // a local copy of packSections, and then when it ends and we know that
+  // react-query has caught up to our local changes, we want to go back to
+  // using the authoritative version from react-query
+  const [localPackSections, setLocalPackSections] = useState(null)
+  const packSections = localPackSections || serverPackSections
 
   const [items, setItems] = useState(() =>
     pack.packSections.reduce(
@@ -133,30 +82,10 @@ export function PackContents({
     ),
   )
 
-  // Next steps
-  // - replace patchPackSection with a proper API call
-  // - heavily refactor while carefully checking for regressions
-  // const patchPackSection = ({ id }, patch) =>
-  //   setPackSections((packSections) =>
-  //     packSections.map((ps) => (ps.id === id ? { ...ps, ...patch } : ps)),
-  //   )
-  // const sections = pack.packSections
-  // const itemsAlt = sections.reduce(
-  //   (obj, s) => ({
-  //     ...obj,
-  //     [s.id]: s.gear.map((g) => g.name),
-  //   }),
-  //   {},
-  // )
-  // const items = itemsAlt
-  // const setItems = () => {
-  //   console.log('setItems called!')
-  // }
-
   // stupid string casting has to happen here because of how object keys
-  // are always strings
+  // are always strings. We can remove this once we're no longer relying on the
+  // 'items' map
   const containers = packSections.map((ps) => '' + ps.id)
-  // useEffect(() => console.log(packSections.map((ps) => ps.name)))
 
   const reorderPackSection = ({ activeId, targetId }) => {
     const activeIndex = packSections.findIndex((ps) => ps.id === +activeId)
@@ -169,13 +98,10 @@ export function PackContents({
     const newRank = getRank(rankBefore, rankAfter)
     console.log({ moveTo: overIndex, rankBefore, newRank, rankAfter })
 
-    // this works but it's not _quite_ fast enough to keep up with
-    // the sortable code. There's some extra event loop stuff going on which
-    // causes UI jank.
-    //
-    // we'll probably need to keep our own {id: rank} mappings for packSections
-    // and gear in the state here, and rebuild the mapping whenever we get
-    // authoritative data from the server
+    // because the optimistic update in api.packSections.mask isn't synchronous,
+    // it will result in UI jank when dropping a section. In order to avoid that,
+    // this component will locally update the section rank using an override mask
+    // first
     setSectionRankMappingMask((mask) => ({
       ...mask,
       [activeSection.id]: newRank,
@@ -183,10 +109,52 @@ export function PackContents({
     api.packSections.patch(activeSection, { rank: newRank })
   }
 
-  const [activeId, setActiveId] = useState(null)
+  const moveGearBetweenSectionsLocally = ({
+    gearId,
+    toSectionId,
+    insertAtIndex,
+  }) => {
+    setLocalPackSections((packSections) =>
+      produce(packSections, (draft) => {
+        // janky way of finding the gear (remove when we're able to put gear in
+        // active.data.current.gear)
+
+        // NOTE THAT RIGHT NOW, GEARID IS ACTUALLY gear.name. We will change
+        // this eventually
+        debugger
+        const gear = packSections
+          .reduce((gear, ps) => [...gear, ...ps.gear], [])
+          .find((g) => g.name === gearId)
+        const oldSectionIndex = draft.findIndex(
+          (ps) => ps.id === gear.packSectionId,
+        )
+        const newSectionIndex = draft.findIndex((ps) => ps.id === +toSectionId)
+        if (newSectionIndex === oldSectionIndex) {
+          throw Error('you goofed')
+        }
+        // first, remove the gear from the old section
+        packSections[oldSectionIndex].gear = packSections[
+          oldSectionIndex
+        ].gear.filter((g) => g.name !== gearId)
+        // next, add the gear as the last item in the new section
+        const newGear = {
+          ...gear,
+          packSectionId: packSections[newSectionIndex].id,
+        }
+        packSections[newSectionIndex].gear.push(newGear)
+      }),
+    )
+  }
+
+  const [dragItem, setDragItem] = useState(null)
+
+  // Some of this could probably be wrapped up into a custom hook with the collisionDetectionStrategy
   const lastOverId = useRef(null)
   const recentlyMovedToNewContainer = useRef(false)
-  const isSortingContainer = activeId ? containers.includes(activeId) : false
+  // this is used to disable the sortables inside the pack section while the
+  // pack section is being dragged
+  const isSortingPackSection = dragItem?.data.current.type === 'packSection'
+  const isSortingGear = dragItem?.data.current.type === 'gear'
 
   /**
    * Custom collision detection strategy optimized for multiple containers
@@ -198,11 +166,13 @@ export function PackContents({
    */
   const collisionDetectionStrategy = useCallback(
     (args) => {
-      if (activeId && activeId in items) {
+      // if we're dragging a packSection, only look at other packSections when
+      // determining the drop target
+      if (isSortingPackSection) {
         return closestCenter({
           ...args,
           droppableContainers: args.droppableContainers.filter(
-            (container) => container.id in items,
+            (container) => container.data.current.type === 'packSection',
           ),
         })
       }
@@ -244,13 +214,13 @@ export function PackContents({
       // to the id of the draggable item that was moved to the new container, otherwise
       // the previous `overId` will be returned which can cause items to incorrectly shift positions
       if (recentlyMovedToNewContainer.current) {
-        lastOverId.current = activeId
+        lastOverId.current = dragItem.id
       }
 
       // If no droppable is matched, return the last match
       return lastOverId.current ? [{ id: lastOverId.current }] : []
     },
-    [activeId, items],
+    [dragItem, items, isSortingPackSection],
   )
   const [clonedItems, setClonedItems] = useState(null)
   const sensors = useSensors(useSensor(MouseSensor), useSensor(TouchSensor))
@@ -282,7 +252,7 @@ export function PackContents({
       setItems(clonedItems)
     }
 
-    setActiveId(null)
+    setDragItem(null)
     setClonedItems(null)
   }
 
@@ -302,7 +272,13 @@ export function PackContents({
         },
       }}
       onDragStart={({ active }) => {
-        setActiveId(active.id)
+        // keep track of what we're currently dragging
+        setDragItem(active)
+        // switch over to using local state for the pack sections while
+        // dragging
+        setLocalPackSections(serverPackSections)
+        // (legacy) clone the "items" stuff so that we can revert
+        // if needed
         setClonedItems(items)
       }}
       onDragOver={({ active, over }) => {
@@ -322,6 +298,45 @@ export function PackContents({
         }
 
         if (activeContainer !== overContainer) {
+          // okay, so if we get here, then we're moving a gear item between
+          // two pack sections.
+          //
+          // there are two possible scenarios to handle:
+          //
+          // (1) the item we're hovering over is a packSection, in which case we
+          // want to add our gear item to the end of this packSection. This
+          // generally only occurs if the target packSection is empty
+          // if (over?.data.current.type === 'packSection') {
+          //   moveGearBetweenSectionsLocally({
+          //     gearId: active.id,
+          //     toSectionId: over.id,
+          //   })
+          // }
+          // // (2) the item we're hovering over is a gear item, in which case we
+          // // want to insert our gear item either above or below this existing
+          // // gear item
+          // if (over?.data.current.type === 'gear') {
+          //   const isBelowOverItem =
+          //     over &&
+          //     active.rect.current.translated &&
+          //     active.rect.current.translated.top >
+          //       over.rect.top + over.rect.height
+          //   if (isBelowOverItem) {
+          //     moveGearBetweenSectionsLocally({
+          //       gearId: active.id,
+          //       toSectionId: over.id, // ugh, see if we had the gearId here, we'd be set.
+          //       afterGearId: over.data.current.id,
+          //     })
+          //   } else {
+          //     moveGearBetweenSectionsLocally({
+          //       gearId: active.id,
+          //       toSectionId: over.id,
+          //       beforeGearId: over.data.current.id,
+          //     })
+          //   }
+          // }
+
+          // old and crufty and we want to delete it
           setItems((items) => {
             const activeItems = items[activeContainer]
             const overItems = items[overContainer]
@@ -365,28 +380,23 @@ export function PackContents({
         }
       }}
       onDragEnd={({ active, over }) => {
-        if (active.id in items && over?.id) {
-          if (activeId !== over?.id) {
+        if (active.data.current.type === 'packSection' && over?.id) {
+          if (active?.id !== over?.id) {
             reorderPackSection({ activeId: active.id, targetId: over.id })
           }
-          // setContainers((containers) => {
-          //   const activeIndex = containers.indexOf(active.id)
-          //   const overIndex = containers.indexOf(over.id)
-          //   return arrayMove(containers, activeIndex, overIndex)
-          // })
         }
 
         const activeContainer = findContainer(active.id)
 
         if (!activeContainer) {
-          setActiveId(null)
+          setDragItem(null)
           return
         }
 
         const overId = over?.id
 
         if (!overId) {
-          setActiveId(null)
+          setDragItem(null)
           return
         }
 
@@ -412,7 +422,7 @@ export function PackContents({
           }
         }
 
-        setActiveId(null)
+        setDragItem(null)
       }}
       cancelDrop={cancelDrop}
       onDragCancel={onDragCancel}
@@ -423,7 +433,7 @@ export function PackContents({
           display: 'grid',
           boxSizing: 'border-box',
           gap: 16,
-          gridAutoFlow: vertical ? 'row' : 'column',
+          gridAutoFlow: 'row',
         }}
       >
         <SortableContext
@@ -445,7 +455,7 @@ export function PackContents({
                 {items[ps.id].map((value, index) => {
                   return (
                     <SortableItem
-                      disabled={isSortingContainer}
+                      disabled={isSortingPackSection}
                       key={value}
                       id={value}
                       index={index}
@@ -465,11 +475,8 @@ export function PackContents({
       </div>
       {createPortal(
         <DragOverlay adjustScale={adjustScale} dropAnimation={dropAnimation}>
-          {activeId
-            ? containers.includes(activeId)
-              ? renderContainerDragOverlay(activeId)
-              : renderSortableItemDragOverlay(activeId)
-            : null}
+          {isSortingPackSection && renderContainerDragOverlay(dragItem.id)}
+          {isSortingGear && renderSortableItemDragOverlay(dragItem.id)}
         </DragOverlay>,
         document.body,
       )}
@@ -545,6 +552,8 @@ function getColor(id) {
       return '#00bcd4'
     case 'D':
       return '#ef769f'
+    default:
+      return null
   }
 
   return undefined
@@ -572,6 +581,10 @@ function SortableItem({
     transition,
   } = useSortable({
     id,
+    data: {
+      type: 'gear',
+      // would be nice to pass the full "gear" object here!
+    },
   })
   const mounted = useMountStatus()
   const mountedWhileDragging = isDragging && !mounted
@@ -613,4 +626,63 @@ function useMountStatus() {
   }, [])
 
   return isMounted
+}
+
+const animateLayoutChanges = (args) =>
+  args.isSorting || args.wasDragging ? defaultAnimateLayoutChanges(args) : true
+
+function DroppableContainer({
+  children,
+  columns = 1,
+  disabled,
+  id,
+  items,
+  style,
+  ...props
+}) {
+  const {
+    active,
+    attributes,
+    isDragging,
+    listeners,
+    over,
+    setNodeRef,
+    transition,
+    transform,
+  } = useSortable({
+    id,
+    data: {
+      type: 'packSection',
+    },
+    animateLayoutChanges,
+  })
+
+  const userIsDraggingItemOverThisSection =
+    id === over?.id && active?.data?.current?.type !== 'packSection'
+  const userIsDraggingItemOverAChildOfThisSection = items.includes(over?.id)
+
+  const isOverContainer =
+    userIsDraggingItemOverThisSection ||
+    userIsDraggingItemOverAChildOfThisSection
+
+  return (
+    <Container
+      ref={disabled ? undefined : setNodeRef}
+      style={{
+        ...style,
+        transition,
+        transform: CSS.Translate.toString(transform),
+        opacity: isDragging ? 0.5 : undefined,
+      }}
+      hover={isOverContainer}
+      handleProps={{
+        ...attributes,
+        ...listeners,
+      }}
+      columns={columns}
+      {...props}
+    >
+      {children}
+    </Container>
+  )
 }
