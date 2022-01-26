@@ -72,11 +72,16 @@ export function PackContents({
   const [localPackSections, setLocalPackSections] = useState(null)
   const packSections = localPackSections || serverPackSections
 
+  const gearMap = packSections
+    .map((ps) => ps.gear)
+    .flat()
+    .reduce((gearMap, gear) => ({ ...gearMap, [gear.id]: gear }), {})
+
   const [items, setItems] = useState(() =>
     pack.packSections.reduce(
       (obj, ps) => ({
         ...obj,
-        [ps.id]: ps.gear.map((g) => g.name),
+        [ps.id]: ps.gear.map((g) => '' + g.id),
       }),
       {},
     ),
@@ -107,43 +112,6 @@ export function PackContents({
       [activeSection.id]: newRank,
     }))
     api.packSections.patch(activeSection, { rank: newRank })
-  }
-
-  const moveGearBetweenSectionsLocally = ({
-    gearId,
-    toSectionId,
-    insertAtIndex,
-  }) => {
-    setLocalPackSections((packSections) =>
-      produce(packSections, (draft) => {
-        // janky way of finding the gear (remove when we're able to put gear in
-        // active.data.current.gear)
-
-        // NOTE THAT RIGHT NOW, GEARID IS ACTUALLY gear.name. We will change
-        // this eventually
-        debugger
-        const gear = packSections
-          .reduce((gear, ps) => [...gear, ...ps.gear], [])
-          .find((g) => g.name === gearId)
-        const oldSectionIndex = draft.findIndex(
-          (ps) => ps.id === gear.packSectionId,
-        )
-        const newSectionIndex = draft.findIndex((ps) => ps.id === +toSectionId)
-        if (newSectionIndex === oldSectionIndex) {
-          throw Error('you goofed')
-        }
-        // first, remove the gear from the old section
-        packSections[oldSectionIndex].gear = packSections[
-          oldSectionIndex
-        ].gear.filter((g) => g.name !== gearId)
-        // next, add the gear as the last item in the new section
-        const newGear = {
-          ...gear,
-          packSectionId: packSections[newSectionIndex].id,
-        }
-        packSections[newSectionIndex].gear.push(newGear)
-      }),
-    )
   }
 
   const [dragItem, setDragItem] = useState(null)
@@ -300,6 +268,8 @@ export function PackContents({
         if (activeContainer !== overContainer) {
           // okay, so if we get here, then we're moving a gear item between
           // two pack sections.
+          // however, in order to use the setLocalPackSections stuff, we need
+          // to refactor all references to the items[] array
           //
           // there are two possible scenarios to handle:
           //
@@ -452,12 +422,13 @@ export function PackContents({
               onRemove={() => handleRemove(ps)}
             >
               <SortableContext items={items[ps.id]} strategy={strategy}>
-                {items[ps.id].map((value, index) => {
+                {items[ps.id].map((gearId, index) => {
                   return (
                     <SortableItem
+                      gear={gearMap[gearId]}
                       disabled={isSortingPackSection}
-                      key={value}
-                      id={value}
+                      key={gearId}
+                      id={gearId}
                       index={index}
                       handle={handle}
                       style={getItemStyles}
@@ -486,7 +457,7 @@ export function PackContents({
   function renderSortableItemDragOverlay(id) {
     return (
       <Item
-        value={id}
+        value={gearMap[id].name}
         handle={handle}
         style={getItemStyles({
           containerId: findContainer(id),
@@ -569,6 +540,7 @@ function SortableItem({
   containerId,
   getIndex,
   wrapperStyle,
+  gear,
 }) {
   const {
     setNodeRef,
@@ -580,9 +552,10 @@ function SortableItem({
     transform,
     transition,
   } = useSortable({
-    id,
+    id: gear.id + '',
     data: {
       type: 'gear',
+      gear,
       // would be nice to pass the full "gear" object here!
     },
   })
@@ -592,7 +565,7 @@ function SortableItem({
   return (
     <Item
       ref={disabled ? undefined : setNodeRef}
-      value={id}
+      value={gear.name}
       dragging={isDragging}
       sorting={isSorting}
       handle={handle}
