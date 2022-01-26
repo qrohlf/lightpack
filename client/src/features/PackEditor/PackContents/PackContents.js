@@ -69,8 +69,8 @@ export function PackContents({
   // a local copy of packSections, and then when it ends and we know that
   // react-query has caught up to our local changes, we want to go back to
   // using the authoritative version from react-query
-  const [localPackSections, setLocalPackSections] = useState(null)
-  const packSections = localPackSections || serverPackSections
+  // const [localPackSections, setLocalPackSections] = useState(null)
+  const packSections = serverPackSections
 
   const gearMap = packSections
     .map((ps) => ps.gear)
@@ -244,7 +244,7 @@ export function PackContents({
         setDragItem(active)
         // switch over to using local state for the pack sections while
         // dragging
-        setLocalPackSections(serverPackSections)
+        // setLocalPackSections(serverPackSections)
         // (legacy) clone the "items" stuff so that we can revert
         // if needed
         setClonedItems(items)
