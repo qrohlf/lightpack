@@ -1,8 +1,17 @@
 .PackEditorSection {
+  position: relative;
   display: grid;
   grid-template-columns: min-content 1fr;
   gap: 8px;
   margin-bottom: 34px;
+  padding: 8px;
+  border-radius: 10px;
+  box-shadow: none;
+  transform: none;
+  transition: box-shadow 200ms ease;
+  will-change: box-shadow;
+  background: #fff;
+  z-index: 0;
 }
 
 .colorDot {
@@ -10,4 +19,9 @@
   width: 15px;
   border-radius: 100%;
   margin-top: 11px;
+}
+
+.isDragging {
+  box-shadow: 0 5px 20px rgba(0, 0, 0, 0.2);
+  z-index: 1;
 }

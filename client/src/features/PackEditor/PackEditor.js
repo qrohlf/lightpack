@@ -2,7 +2,6 @@ import React from 'react'
 import styles from './PackEditor.module.css'
 import { queryConstants } from 'lib/queryConstants'
 import { useQuery } from 'react-query'
-import { PackEditorSection } from './PackEditorSection'
 import { SectionsTable } from './SectionsTable'
 import { PieChart } from 'common/PieChart'
 import { LayoutFixed } from 'common/LayoutFixed'
@@ -11,7 +10,8 @@ import { useParams } from 'react-router-dom'
 import { useApi } from 'hooks/useApi'
 import { Popover } from 'common/Popover'
 import { LoadablePage } from 'common/LoadablePage'
-import { DndDemo, PackContents } from './PackContents'
+import { DndDemo } from './PackContents'
+import { MinimalDnd } from './MinimalDnd'
 
 const colorScheme = colorSchemes.metro
 
@@ -56,15 +56,12 @@ export const PackEditor = ({ children, readonly }) => {
                 <Header pack={packQuery.data.pack} />
                 <div className={styles.packContents}>
                   {packId === 1 && <DndDemo />}
-                  {packId === 2 &&
-                    packQuery.data.pack.packSections.map((s, i) => (
-                      <PackEditorSection
-                        key={s.id}
-                        section={s}
-                        color={colorForIndex(i)}
-                      />
-                    ))}
-                  {packId > 2 && <PackContents pack={packQuery.data.pack} />}
+                  {packId !== 1 && (
+                    <MinimalDnd
+                      packQuery={packQuery}
+                      colorForIndex={colorForIndex}
+                    />
+                  )}
                 </div>
               </div>
             </div>
