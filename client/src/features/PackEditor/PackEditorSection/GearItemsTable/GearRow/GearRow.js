@@ -33,54 +33,56 @@ export const GearHeader = () => (
   </div>
 )
 
-export const GearRow = React.forwardRef(({ gear, ...props }, ref) => {
-  const api = useApi()
-  const toggleModifier = (modifier) =>
-    api.gear.patch(gear, { [modifier]: !gear[modifier] })
+export const GearRow = React.forwardRef(
+  ({ gear, handleProps, isDragging, ...props }, ref) => {
+    const api = useApi()
+    const toggleModifier = (modifier) =>
+      api.gear.patch(gear, { [modifier]: !gear[modifier] })
 
-  return (
-    <div {...props} ref={ref} className={styles.GearRow} data-qty={gear.qty}>
-      <EditableField
-        className={styles.name}
-        value={gear.name}
-        persistChange={(name) => api.gear.patch(gear, { name })}
-      />
-      <EditableField
-        className={styles.description}
-        value={gear.description}
-        persistChange={(description) => api.gear.patch(gear, { description })}
-      />
-      <div className={styles.modifiers}>
-        {/* worn weight - todo: make this a button! */}
-        <span
-          className={styles.modifierEmoji}
-          data-active={gear.worn}
-          onClick={() => toggleModifier('worn')}
-        >
-          👕
-        </span>
-        {/* consumable */}
-        <span
-          className={styles.modifierEmoji}
-          data-active={gear.consumable}
-          onClick={() => toggleModifier('consumable')}
-        >
-          🌮
-        </span>
+    return (
+      <div {...props} ref={ref} className={styles.GearRow} data-qty={gear.qty}>
+        <EditableField
+          className={styles.name}
+          value={gear.name}
+          persistChange={(name) => api.gear.patch(gear, { name })}
+        />
+        <EditableField
+          className={styles.description}
+          value={gear.description}
+          persistChange={(description) => api.gear.patch(gear, { description })}
+        />
+        <div className={styles.modifiers}>
+          {/* worn weight - todo: make this a button! */}
+          <span
+            className={styles.modifierEmoji}
+            data-active={gear.worn}
+            onClick={() => toggleModifier('worn')}
+          >
+            👕
+          </span>
+          {/* consumable */}
+          <span
+            className={styles.modifierEmoji}
+            data-active={gear.consumable}
+            onClick={() => toggleModifier('consumable')}
+          >
+            🌮
+          </span>
+        </div>
+        <div className={styles.weight}>
+          <WeightEditor gear={gear} />
+        </div>
+        <EditableField
+          className={styles.qty}
+          value={gear.qty}
+          persistChange={(qty) => api.gear.patch(gear, { qty: +qty })}
+          inputProps={{ type: 'number', min: 0 }}
+          throttle={0}
+        />
       </div>
-      <div className={styles.weight}>
-        <WeightEditor gear={gear} />
-      </div>
-      <EditableField
-        className={styles.qty}
-        value={gear.qty}
-        persistChange={(qty) => api.gear.patch(gear, { qty: +qty })}
-        inputProps={{ type: 'number', min: 0 }}
-        throttle={0}
-      />
-    </div>
-  )
-})
+    )
+  },
+)
 
 // TODO make this a context powered thing
 const useReadonly = () => false

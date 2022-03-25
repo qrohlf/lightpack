@@ -2,7 +2,6 @@ import React from 'react'
 import styles from './GearItemsTable.module.css'
 import { GearHeader, GearRow, TotalRow } from './GearRow'
 import _ from 'lodash'
-
 export const GearItemsTable = ({ section }) => {
   const gear = _.sortBy(section.gear, (g) => g.rank)
 
